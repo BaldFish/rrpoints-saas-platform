@@ -16,7 +16,7 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(iView);
 
-import '@/common/js/validate.js'
+//import '@/common/js/validate.js'
 
 import axios from 'axios';
 
