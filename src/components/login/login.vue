@@ -194,14 +194,14 @@
           align-items: center;
           img{
             width: 26px;
-            height: 22px;
+            height: 20px;
             position: relative;
-            right: 254px;
+            right: 305px;
           }
           .captcha-code{
             width: 88px;
             height: 38px;
-            right: 116px;
+            right: 166px;
             cursor pointer
           }
           .el-input__inner{
