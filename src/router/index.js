@@ -3,9 +3,9 @@ import Router from 'vue-router'
 import myLogin from '@/components/login/login'
 import myHome from '@/components/home/home'
 import myUserManagement from '@/components/home/userManagement/userManagement'
-import myUserQuery from '@/components/home/userManagement/userQuery'
-import myUserDetails from '@/components/home/userManagement/userDetails'
-import myMerchantQuery from '@/components/home/userManagement/merchantQuery'
+import myShopsQuery from '@/components/home/userManagement/shopsQuery'
+import myShopDetails from '@/components/home/userManagement/shopDetails'
+import myServiceQuery from '@/components/home/userManagement/serviceQuery'
 import myAddShop from '@/components/home/userManagement/addShop'
 
 Vue.use(Router);
@@ -36,22 +36,22 @@ export default new Router({
           children:[
             {
               path: '',
-              redirect:"/home/userManagement/userQuery",
+              redirect:"/home/userManagement/shopsQuery",
             },
             {
-              path: '/home/userManagement/userQuery',
-              name: 'userQuery',
-              component: myUserQuery,
+              path: '/home/userManagement/shopsQuery',
+              name: 'shopsQuery',
+              component: myShopsQuery,
             },
             {
-              path: '/home/userManagement/userDetails',
-              name: 'userDetails',
-              component: myUserDetails,
+              path: '/home/userManagement/shopDetails',
+              name: 'shopDetails',
+              component: myShopDetails,
             },
             {
-              path: '/home/userManagement/merchantQuery',
-              name: 'merchantQuery',
-              component: myMerchantQuery,
+              path: '/home/userManagement/serviceQuery',
+              name: 'serviceQuery',
+              component: myServiceQuery,
             },
             {
               path: '/home/userManagement/addShop',

@@ -1,5 +1,5 @@
 <template>
-  <div class="userDetails">
+  <div class="shopDetails">
     <div class="list_wrap">
       <div style="position: relative; background-color: rgb(241,243,249);padding-left: 16px;">
         <div class="content-title">
@@ -130,7 +130,7 @@
 
 <script>
   export default {
-    name: "userDetails",
+    name: "shopDetails",
     components: {},
     data() {
       return {
@@ -268,8 +268,8 @@
       //获取所点击行的信息
       getClickInfo(row){
         sessionStorage.setItem("clickInfo", JSON.stringify(row));
-        //this.$router.push("/home/userManagement/userDetails");
-        window.open("/home/userManagement/userDetails",'_blank');
+        //this.$router.push("/home/userManagement/shopDetails");
+        window.open("/home/userManagement/shopDetails",'_blank');
       },
       //更改每页显示条数
       handleSizeChange(val) {
@@ -316,7 +316,7 @@
 </script>
 
 <style scoped lang="stylus">
-  .userDetails {
+  .shopDetails {
     .list_wrap {
       margin 0 auto
       .content-title{

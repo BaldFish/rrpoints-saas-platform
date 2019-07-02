@@ -9,13 +9,13 @@
         <el-menu default-active="userQuery" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
                  unique-opened>
           <el-menu-item index="userQuery">
-            <router-link to="/home/userManagement/userQuery">
+            <router-link to="/home/userManagement/shopsQuery">
               <i class="icon1"></i>
               店铺管理
             </router-link>
           </el-menu-item>
           <el-menu-item index="accountRanking">
-            <router-link to="/home/userManagement/merchantQuery">
+            <router-link to="/home/userManagement/serviceQuery">
               <i class="icon2"></i>
               服务包管理
             </router-link>
@@ -32,12 +32,6 @@
               退出账号
             </a>
           </el-menu-item>
-        <!--  <el-menu-item index="accountRanking">
-            <router-link to="/home/userManagement/apiUserQuery">
-              <i class="icon5"></i>
-              API账户查询
-            </router-link>
-          </el-menu-item>-->
         </el-menu>
       </el-aside>
       <el-main class="" style="margin: 0;padding: 0;">

@@ -1,5 +1,5 @@
 <template>
-  <div class="userQuery">
+  <div class="serviceQuery">
     <div class="list_wrap">
       <div style="position: relative; background-color: rgb(241,243,249);padding-left: 16px;">
         <div class="content-title">
@@ -148,7 +148,7 @@
 
 <script>
   export default {
-    name: "userQuery",
+    name: "serviceQuery",
     components: {},
     data() {
       return {
@@ -395,7 +395,7 @@
 </script>
 
 <style scoped lang="stylus">
-  .userQuery {
+  .serviceQuery {
     .list_wrap {
       margin 0 auto
       .content-title{
