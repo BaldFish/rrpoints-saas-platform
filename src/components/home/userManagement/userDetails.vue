@@ -44,14 +44,14 @@
               <h4>太保积分</h4>
               <p>2000</p>
             </div>
-            <div class="yuan-num">
+            <!--<div class="yuan-num">
               <h4>XX积分</h4>
               <p>6000</p>
             </div>
             <div class="taibao-num">
               <h4>XX积分</h4>
               <p>8000</p>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>

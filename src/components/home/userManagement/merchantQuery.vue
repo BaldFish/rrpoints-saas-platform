@@ -118,8 +118,8 @@
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="指定店铺" prop="region"  :label-width="formLabelWidth">
           <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option label="北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）" value="shanghai"></el-option>
+            <el-option label="王宏洗车店维修保养" value="beijing"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="服务包" prop="name"  :label-width="formLabelWidth">
