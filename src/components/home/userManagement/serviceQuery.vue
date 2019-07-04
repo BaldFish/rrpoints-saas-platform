@@ -52,27 +52,27 @@
               </el-table-column>
               <el-table-column label="店铺名称" align="center" min-width="180" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）" }}</span>
+                  <span>{{ scope.row.shopName }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="服务包名称" align="center" min-width="120" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "标准洗车1次" }}</span>
+                  <span>{{ scope.row.pakgName }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间" align="center" min-width="120" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "2019-06-28 15:56:25" }}</span>
+                  <span>{{ scope.row.time }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="元积分" align="center" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ 6000 }}</span>
+                  <span>{{ scope.row.yuanPoints }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="太保积分" align="center" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ 2000 }}</span>
+                  <span>{{ scope.row.taiPoints }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="操作" min-width="120"  align="center">
@@ -160,7 +160,79 @@
         totalYJF: "",
         totalYDD: "",
         totalGGD: "",
-        userList: [{},{},{},{},{},{},{},{},{},{},],
+        userList: [
+          {
+            "shopName": "月福洗车",
+            "pakgName": "标准洗车1次",
+            "address":"0x976ff0wj********1q0df224wx0",
+            "time": "2019-12-05 14:45:09",
+            "yuanPoints": "6203",
+            "taiPoints": "1540",
+          },
+          {
+            "shopName": "北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）",
+            "pakgName": "发动机清洗1次",
+            "time": "2019-05-22 10:11:20",
+            "yuanPoints": "1262",
+            "taiPoints": "450",
+          },
+          {
+            "shopName": "昌平奔驰4S店分院",
+            "pakgName": "更换空气芯、空调芯2次",
+            "time": "2018-05-22 13:01:50",
+            "yuanPoints": "4481",
+            "taiPoints": "3855",
+          },
+          {
+            "shopName": "王宏洗车店维修保养",
+            "pakgName": "更换机油1次",
+            "time": "2019-06-27 17:25:25",
+            "yuanPoints": "5800",
+            "taiPoints": "1230",
+          },
+          {
+            "shopName": "北京市德安汽车修理厂",
+            "pakgName": "刹车片更换4次",
+            "time": "2019-09-27 16:16:28",
+            "yuanPoints": "1600",
+            "taiPoints": "462",
+          },
+          {
+            "shopName": "宝马4s店",
+            "pakgName": "四轮定位、刹车系统保养1次",
+            "time": "2018-02-16 17:16:17",
+            "yuanPoints": "6180",
+            "taiPoints": "5234",
+          },
+          {
+            "shopName": "北京鹏程汽修",
+            "pakgName": "油门踏板调教1次",
+            "time": "2018-04-16 10:28:05",
+            "yuanPoints": "8128",
+            "taiPoints": "4520",
+          },
+          {
+            "shopName": "有壹手快修(京密路店)",
+            "pakgName": "更换火花塞1次",
+            "time": "2018-10-22 11:32:12",
+            "yuanPoints": "2756",
+            "taiPoints": "968",
+          },
+          {
+            "shopName": "万达汽车修理有限公司(万达洗车)",
+            "pakgName": "更换防冻液和刹车油2次",
+            "time": "2019-07-03 06:54:17",
+            "yuanPoints": "3270",
+            "taiPoints": "680",
+          },
+          {
+            "shopName": "汽车维修养护洗车",
+            "pakgName": "更换机油滤清器1次",
+            "time": "2019-09-15 08:18:55",
+            "yuanPoints": "8106",
+            "taiPoints": "6700",
+          }
+        ],
         phone: "",
         name: "",
         idcard: "",
