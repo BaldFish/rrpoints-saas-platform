@@ -84,27 +84,27 @@
                        @sort-change='sortChange'>
               <el-table-column label="手机号码" align="center" min-width="110" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>18611471680</span>
+                  <span>{{ scope.row.phone }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间" align="center" min-width="150"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "2019-06-25 10:15:55" }}</span>
+                  <span>{{ scope.row.time }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="消费内容" align="center" min-width="130" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "服务1：标准洗车1次" }}</span>
+                  <span>{{ scope.row.pakgName }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="金额" align="center"  min-width="100"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "+200" }}</span>
+                  <span>{{ scope.row.amount }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="备注" align="center"  min-width="100"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ "汽车清洗" }}</span>
+                  <span>{{ scope.row.notice }}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -142,7 +142,77 @@
         totalYJF: "",
         totalYDD: "",
         totalGGD: "",
-        userList: [{},{},{},{},{},{},{},{},{},{},],
+        userList: [
+          {
+            "phone": "13518654825",
+            "time": "2019-12-05 14:45:09",
+            "pakgName": "标准洗车1次",
+            "amount":"+200",
+            "notice": "洗车"
+          },
+          {
+            "phone": "18601522684",
+            "time": "2019-05-22 10:11:20",
+            "pakgName": "发动机清洗1次",
+            "amount":"+460",
+            "notice": "发动机清洗"
+          },
+          {
+            "phone": "18636543845",
+            "time": "2018-05-22 13:01:50",
+            "pakgName": "更换空气芯、空调芯2次",
+            "amount":"+310",
+            "notice": "空气芯、空调芯"
+          },
+          {
+            "phone": "13512245686",
+            "time": "2019-06-27 17:25:25",
+            "pakgName": "更换机油1次",
+            "amount":"+160",
+            "notice": "机油"
+          },
+          {
+            "phone": "13625858366",
+            "time": "2019-09-27 16:16:28",
+            "pakgName": "刹车片更换4次",
+            "amount":"+700",
+            "notice": "刹车片"
+          },
+          {
+            "phone": "18634219987",
+            "time": "2018-02-16 17:16:17",
+            "pakgName": "四轮定位、刹车系统保养1次",
+            "amount":"+1300",
+            "notice": "四轮定位"
+          },
+          {
+            "phone": "15586254168",
+            "time": "2018-04-16 10:28:05",
+            "pakgName": "油门踏板调教1次",
+            "amount":"+140",
+            "notice": "油门踏板"
+          },
+          {
+            "phone": "18625648552",
+            "time": "2018-10-22 11:32:12",
+            "pakgName": "更换火花塞1次",
+            "amount":"+80",
+            "notice": "火花塞"
+          },
+          {
+            "phone": "18682619302",
+            "time": "2019-07-03 06:54:17",
+            "pakgName": "更换防冻液和刹车油2次",
+            "amount":"+360",
+            "notice": "防冻液"
+          },
+          {
+            "phone": "13536828269",
+            "time": "2019-09-15 08:18:55",
+            "pakgName": "更换机油滤清器1次",
+            "amount":"+210",
+            "notice": "机油滤清器"
+          },],
         phone: "",
         name: "",
         idcard: "",

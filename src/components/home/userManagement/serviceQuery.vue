@@ -654,7 +654,7 @@
     min-width 287px !important
   }
   .el-dialog{
-    width: 530px
+    width: 530px !important
     .el-dialog__body{
       padding-bottom 0
       .el-form-item{
