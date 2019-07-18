@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import myLogin from '@/components/login/login'
+import myRegister from '@/components/register/register'
+import myForgetPwd from '@/components/forgetPwd/forgetPwd'
 import myHome from '@/components/home/home'
 import myUserManagement from '@/components/home/userManagement/userManagement'
 import myShopsQuery from '@/components/home/userManagement/shopsQuery'
@@ -21,6 +23,16 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: myLogin,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: myRegister,
+    },
+    {
+      path: '/forgetPwd',
+      name: 'forgetPwd',
+      component: myForgetPwd,
     },
     {
       path: '/home',
