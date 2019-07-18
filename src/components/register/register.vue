@@ -234,12 +234,12 @@
             width: 26px;
             height: 20px;
             position: relative;
-            right: 305px;
+            right: 355px;
           }
           .captcha-code{
             width: 88px;
             height: 38px;
-            right: 120px;
+            right: 170px;
             cursor pointer
           }
           .el-input__inner{
