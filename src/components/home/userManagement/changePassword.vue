@@ -388,7 +388,7 @@
                 width: 26px;
                 height: 20px;
                 position: relative;
-                right: 304px;
+                right: 355px;
               }
               .el-input__inner{
                 width: 326px
