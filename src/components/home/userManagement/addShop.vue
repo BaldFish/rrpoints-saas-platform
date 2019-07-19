@@ -10,18 +10,49 @@
           <h3>新增店铺</h3>
           <br>
           <br>
+          <label>商家类型：</label>
+          <el-input v-model="address" placeholder="请输入商家类型" clearable style="width: 380px"></el-input>
           <label>店铺名称：</label>
           <el-input v-model="address" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
+          <br/>
+          <br/>
           <label>店铺联系方式：</label>
           <el-input v-model="idcard" placeholder="请输入联系方式" clearable style="width: 380px"></el-input>
-          <br/>
-          <br/>
-          <br/>
           <label>店铺地址：</label>
           <el-input v-model="idcard" placeholder="请输入店铺地址" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
+          <label>精修车型：</label>
+          <el-input v-model="idcard" placeholder="请输入精修车型" clearable style="width: 380px"></el-input>
+          <label>服务范围：</label>
+          <el-input v-model="idcard" placeholder="请输入服务范围" clearable style="width: 380px"></el-input>
           <br/>
+          <br/>
+          <label>营业时间：</label>
+          <el-input v-model="idcard" placeholder="请输入营业时间" clearable style="width: 380px"></el-input>
+          <label>签名：</label>
+          <el-input v-model="idcard" placeholder="请输入签名" clearable style="width: 380px"></el-input>
+          <br/>
+          <br/>
+          <label>商家介绍：</label>
+          <el-input v-model="idcard" placeholder="请输入商家介绍" clearable style="width: 888px"></el-input>
+          <br/>
+          <br/>
+          <label>上传图片：</label>
+          <div class="img-box">
+            <el-upload
+              action="https://jsonplaceholder.typicode.com/posts/"
+              list-type="picture-card"
+              :on-preview="handlePictureCardPreview"
+              :on-remove="handleRemove">
+              <i class="el-icon-plus"></i>
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+          </div>
+
+
           <div class="map-box">
             <template>
               <baidu-map class="map" :center="center" :zoom="zoom">
@@ -33,12 +64,6 @@
                 </bm-marker>
               </baidu-map>
             </template>
-            <div class="fake-list">
-              <img src="@/common/images/001.png" alt="">
-              <img src="@/common/images/002.png" alt="">
-              <img src="@/common/images/003.png" alt="">
-              <img src="@/common/images/004.png" alt="">
-            </div>
           </div>
           <div class="search-btn" @click="addNewShop()">创建</div>
         </div>
@@ -53,6 +78,10 @@
     components: {},
     data() {
       return {
+        dialogImageUrl: '',
+        dialogVisible: false,
+
+
         totalUser: 10,
         count_user: "",
         count_with_address: "",
@@ -115,6 +144,15 @@
       }
     },
     methods: {
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+
+
       getPosition (e) {
         alert(`${e.point.lng} / ${e.point.lat}`)
       },
@@ -249,8 +287,9 @@
   .map {
    /* width: 100%;
     height: 300px;*/
-    width: 845px;
-    height: 440px;
+    width: 90%;
+    height: 340px;
+    margin-left: 5%;
  /*   margin: 0 auto;*/
   }
 </style>
@@ -280,25 +319,15 @@
         margin-top 15px
         background-color #ffffff
         padding: 20px
+        .img-box{
+          margin-left: 124px;
+          margin-bottom: 20px;
+        }
         .map-box{
           margin:0 auto
           display flex
           flex-direction row
           align-items center
-          .fake-list{
-            display flex
-            flex-direction column
-            align-items center
-            margin-left 16px
-            img{
-              width:365px
-              height:70px
-              margin-bottom 10px
-              border:1px solid #f6f8fe
-              cursor pointer
-            }
-          }
-
         }
         .search-btn{
           width: 100px;
@@ -321,6 +350,9 @@
         label{
           font-size: 16px;
           color: #333333;
+          width: 120px
+          display: inline-block;
+          text-align: right;
         }
       }
       .delete-btn{
@@ -339,7 +371,6 @@
 </style>
 <style lang="stylus">
   .el-input{
-    margin-right 50px
     .el-input__inner{
       background-color: #f6f8fe;
       border: solid 1px #dfe6f7;
