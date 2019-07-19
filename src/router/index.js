@@ -9,6 +9,7 @@ import myShopsQuery from '@/components/home/userManagement/shopsQuery'
 import myShopDetails from '@/components/home/userManagement/shopDetails'
 import myServiceQuery from '@/components/home/userManagement/serviceQuery'
 import myAddShop from '@/components/home/userManagement/addShop'
+import myChangePassword from '@/components/home/userManagement/changePassword'
 
 Vue.use(Router);
 
@@ -69,6 +70,11 @@ export default new Router({
               path: '/home/userManagement/addShop',
               name: 'addShop',
               component: myAddShop,
+            },
+            {
+              path: '/home/userManagement/changePassword',
+              name: 'changePassword',
+              component: myChangePassword,
             },
           ]
         },

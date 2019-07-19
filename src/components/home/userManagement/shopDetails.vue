@@ -20,8 +20,8 @@
             <tr>
               <td class="table-title">店铺联系方式：</td>
               <td>010-34467242；010-78476331；</td>
-              <td class="table-title">钱包地址：</td>
-              <td>0x79f2132138793741264749532549870x79f213213879374126474953254987</td>
+              <td class="table-title">店铺类型：</td>
+              <td>4s店</td>
             </tr>
             <tr>
               <td class="table-title">店铺地址：</td>
@@ -29,29 +29,47 @@
               <td class="table-title">经纬度：</td>
               <td>116°28′E,39°54′N</td>
             </tr>
+            <tr>
+              <td class="table-title">精修车型：</td>
+              <td>奥迪，上海通用雪佛兰，一汽大众，上海大众</td>
+              <td class="table-title">服务范围：</td>
+              <td>专业维修、快速保养、电脑检测、轮胎大全、代办验车</td>
+            </tr>
+            <tr>
+              <td class="table-title">营业时间：</td>
+              <td>08：00 ~ 18：00 工作日</td>
+              <td class="table-title">钱包地址：</td>
+              <td>0x79f2132138793741264749532549870x79f213213879374126474953254987</td>
+            </tr>
+            <tr>
+              <td class="table-title" colspan="1">签名：</td>
+              <td colspan="3">为您的爱车提供贴心关爱，保姆式一条龙服务。</td>
+            </tr>
+            <tr>
+              <td class="table-title" colspan="1">商家介绍：</td>
+              <td colspan="3">深耕汽车服务14年，全城14家门店，创建于2001年，是北京规模一类资质汽车维修企业之一。为您的爱车提供贴心关爱，保姆式一条龙服务。</td>
+            </tr>
             </tbody>
           </table>
         </div>
         <div class="user-amount">
-          <h3>账户金额</h3>
-          <br>
-          <div class="num-box">
-            <div class="yuan-num">
-              <h4>元积分</h4>
-              <p>9000</p>
+          <div class="amount-left">
+            <h3>账户金额</h3>
+            <br>
+            <div class="num-box">
+              <div class="yuan-num">
+                <h4>元积分</h4>
+                <p>9000</p>
+              </div>
+           <!--   <div class="taibao-num">
+                <h4>太保积分</h4>
+                <p>2000</p>
+              </div>-->
             </div>
-            <div class="taibao-num">
-              <h4>太保积分</h4>
-              <p>2000</p>
-            </div>
-            <!--<div class="yuan-num">
-              <h4>XX积分</h4>
-              <p>6000</p>
-            </div>
-            <div class="taibao-num">
-              <h4>XX积分</h4>
-              <p>8000</p>
-            </div>-->
+          </div>
+          <div class="amount-right">
+            <img src="@/common/images/header.png" alt="">
+            <p>关注商户二维码可实时获得每笔收款信息</p>
           </div>
         </div>
       </div>
@@ -406,7 +424,7 @@
         }
       }
       .user-info{
-        height: 210px;
+        height: 390px;
         background-color: #ffffff;
         margin-top 15px
         padding:20px
@@ -442,38 +460,57 @@
         height: 130px;
         background-color: #ffffff;
         margin-top 15px
-        padding:20px
-        h3{
-          font-size: 18px;
-          color: #333333;
+        display: flex;
+        flex-direction: row;
+        .amount-left{
+          border-right 12px solid #f1f3f9;
+          width: 330px;
+          h3{
+            font-size: 18px;
+            color: #333333;
+            margin: 20px 0 0 20px;
+          }
+          .num-box{
+            display flex
+            flex-direction row
+            margin-left: 90px;
+            h4{
+              font-size: 14px;
+              padding: 10px 0 4px 0
+            }
+            p{
+              font-size: 24px;
+            }
+            .yuan-num{
+              width: 138px;
+              height: 56px;
+              text-align center
+              background url("../../../common/images/yuan.png") no-repeat center
+              background-size 100% 100%
+              margin-right 24px
+              color: #FFFFFF
+            }
+            .taibao-num{
+              width: 138px;
+              height: 56px;
+              text-align center
+              background url("../../../common/images/taibao.png") no-repeat center
+              background-size 100% 100%
+              color: #FFFFFF
+              margin-right 24px
+            }
+          }
         }
-        .num-box{
-          display flex
-          flex-direction row
-          h4{
-            font-size: 14px;
-            padding: 10px 0 4px 0
+        .amount-right{
+          img{
+            margin: 10px;
+            margin-left: 200px;
           }
           p{
-            font-size: 24px;
-          }
-          .yuan-num{
-            width: 138px;
-            height: 56px;
             text-align center
-            background url("../../../common/images/yuan.png") no-repeat center
-            background-size 100% 100%
-            margin-right 24px
-            color: #FFFFFF
-          }
-          .taibao-num{
-            width: 138px;
-            height: 56px;
-            text-align center
-            background url("../../../common/images/taibao.png") no-repeat center
-            background-size 100% 100%
-            color: #FFFFFF
-            margin-right 24px
+            font-size: 14px;
+            color: #333333;
+            margin-left: 120px;
           }
         }
       }

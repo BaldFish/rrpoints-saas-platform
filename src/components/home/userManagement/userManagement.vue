@@ -20,12 +20,12 @@
               服务包管理
             </router-link>
           </el-menu-item>
-         <!-- <el-menu-item index="accountRanking">
-            <router-link to="/home/userManagement/systemQuery">
+          <el-menu-item index="accountRanking">
+            <router-link to="/home/userManagement/changePassword">
               <i class="icon3"></i>
               修改密码
             </router-link>
-          </el-menu-item>-->
+          </el-menu-item>
           <el-menu-item index="accountRanking">
             <a href="javascript:void(0);" class="{'is-checked',isChecked}" @click="logout()">
               <i class="icon4"></i>
