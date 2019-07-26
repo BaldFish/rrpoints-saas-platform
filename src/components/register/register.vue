@@ -17,7 +17,11 @@
             <div class="input-wraper">
               <el-input clearable class="text" placeholder="请输入验证码" v-model="ruleform.code"></el-input>
               <img src="@/common/images/icon_code.png" alt="">
-              <img class="captcha-code" @click="getCaptcha" :src="captcha_number" alt="">
+              <!--<img class="captcha-code" @click="getCaptcha" :src="captcha_number" alt="">-->
+              <div class="code-box">
+                <div class="img_change_img get_code" @click="getCode" v-if="codeValue">获取验证码</div>
+                <div class="img_change_img count_down" v-else>倒计时({{second}})</div>
+              </div>
             </div>
           </el-form-item>
           <el-form-item prop="password">
@@ -53,7 +57,6 @@
         if (value === '') {
           callback(new Error('请输入手机号'));
         } else {
-          console.log(reg.test(value))
           if (reg.test(value)) {
             callback();
           } else {
@@ -117,14 +120,16 @@
         captcha_id: "",
         errorMessage: "",//错误提示信息
         errorTip: false,
+        second: 60,// 发送验证码倒计时
+        codeValue: true,
       }
     },
     created() {
     },
     beforeMount() {
-      this.$nextTick(() => {
+    /*  this.$nextTick(() => {
         this.getCaptcha()
-      });
+      });*/
     },
     mounted() {
     },
@@ -144,22 +149,62 @@
           console.log(error);
         });
       },
+      //获取短信验证码
+      getCode() {
+        if (this.ruleform.phone && /^1[3-9]\d{9}$/.test(this.ruleform.phone)){
+          //倒计时
+          let me = this;
+          me.codeValue = false;
+          let interval = window.setInterval(function () {
+            if ((me.second--) <= 0) {
+              me.second = 60;
+              me.codeValue = true;
+              window.clearInterval(interval);
+            }
+          }, 1000);
+          //get短信验证码
+          this.$axios({
+            method: 'post',
+            url: `${this.$baseURL}/v1/sms/code`,
+            data: this.$querystring.stringify({
+              phone: "+86" + this.ruleform.phone, //手机号
+              type: 3 //1-注册，2-修改密码, 3-登录
+            })
+          }).then(res => {
+          }).catch(error => {
+            console.log(error);
+          })
+        }
+      },
       //注册
       register(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let data = {
-              phone: '+86'+ this.ruleform.phone, // 手机号
-              password: this.ruleform.password, // 密码
-              repassword: this.ruleform.repassword, // 密码
-              code: this.ruleform.code, // 验证码
-            };
+            //校验短信验证码
             this.$axios({
-              method: 'post',
-              url: `${this.$baseURL}/v1/rrpoints-saas/web/signup`,
-              data: this.$querystring.stringify(data)
+              method: 'get',
+              url: `${this.$baseURL}/v1/sms/+86${this.ruleform.phone}/code/${this.ruleform.captchaCode}`,
+              data: this.$querystring.stringify({
+                phone: "+86" + this.ruleform.phone, //手机号
+                type: 3 //1-注册，2-修改密码, 3-登录
+              })
             }).then(res => {
-              this.$router.push("/login")
+              //去注册
+              let data = {
+                phone: '+86'+ this.ruleform.phone, // 手机号
+                password: this.ruleform.password, // 密码
+                repassword: this.ruleform.repassword, // 密码
+                code: this.ruleform.code, // 验证码
+              };
+              this.$axios({
+                method: 'post',
+                url: `${this.$baseURL}/v1/rrpoints-saas/web/signup`,
+                data: this.$querystring.stringify(data)
+              }).then(res => {
+                this.$router.push("/login")
+              }).catch(error => {
+                console.log(error);
+              });
             }).catch(error => {
               console.log(error);
             });
@@ -226,6 +271,26 @@
             height: 38px;
             right: 170px;
             cursor pointer
+          }
+          .code-box{
+            position: relative
+            right: 170px;
+            .img_change_img{
+              width: 88px;
+              height: 38px;
+              cursor pointer
+              text-align: center;
+            }
+            .get_code{
+              border: 1px solid #306af6;
+              color: #306af6;
+              border-radius 10px
+            }
+            .count_down{
+              background-color: #7d7d7d;
+              color: #ffffff;
+              border-radius 10px
+            }
           }
           .el-input__inner{
             width: 326px

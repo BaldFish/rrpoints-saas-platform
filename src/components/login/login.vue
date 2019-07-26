@@ -25,7 +25,7 @@
           </el-form-item>
         </el-form>
         <div class="link-box">
-          <router-link :to="{path:'/register'}" class="to-password">忘记密码？</router-link>
+          <router-link :to="{path:'/forgetPwd'}" class="to-password">忘记密码？</router-link>
           <router-link :to="{path:'/register'}" class="to-register">去注册</router-link>
         </div>
         <p class="login-btn" @click="login('ruleForms')">登录</p>
@@ -48,7 +48,6 @@
         if (value === '') {
           callback(new Error('请输入手机号'));
         } else {
-          console.log(reg.test(value))
           if (reg.test(value)) {
             callback();
           } else {
