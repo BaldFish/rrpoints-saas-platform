@@ -4,7 +4,7 @@
       <el-aside width="170px" class="nav-aside">
         <div class="header">
           <img src="@/common/images/header.png" alt="">
-          <p>13512333333</p>
+          <p>{{phone.substring(3)}}</p>
         </div>
         <el-menu default-active="userQuery" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
                  unique-opened>
@@ -47,13 +47,24 @@
     components: {},
     data() {
       return {
+        token: '',
+        user_id: '',
+        phone: '',
       }
     },
     created() {
     },
     beforeMount() {
+
     },
     mounted() {
+      if (sessionStorage.getItem("userInfo")){
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+        this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
+        this.phone = JSON.parse(sessionStorage.getItem("userInfo")).phone;
+      } else {
+        this.$router.push("/login")
+      }
     },
     watch: {},
     computed: {},
@@ -71,10 +82,20 @@
           type: 'warning',
           center: true
         }).then(() => {
-          sessionStorage.removeItem("myLogin");
-          this.$router.push("/login")
+          this.$axios({
+            method: 'delete',
+            url: `${this.$baseURL}/v1/rrpoints-saas/web/sessions/${this.user_id}`,
+            headers: {
+              'X-Access-Token': this.token,
+              'Del-Token': this.token,
+            }
+          }).then(res => {
+            sessionStorage.removeItem("userInfo");
+            this.$router.push("/login")
+          }).catch(error => {
+            console.log(error);
+          })
         }).catch(() => {
-
         });
       }
     },

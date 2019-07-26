@@ -4,9 +4,9 @@
       <div class="content">
         <p class="title">人人积分管理后台</p>
         <el-form :model="ruleform" :rules="rules" ref="ruleForms" >
-          <el-form-item prop="userName">
+          <el-form-item prop="phone">
             <div class="input-wraper">
-              <el-input class="phone-wrap" v-model="ruleform.userName" clearable placeholder="请输入手机号"></el-input>
+              <el-input class="phone-wrap" v-model="ruleform.phone" clearable placeholder="请输入手机号"></el-input>
               <img src="@/common/images/icon_user.png" alt="">
             </div>
           </el-form-item>
@@ -24,8 +24,12 @@
             </div>
           </el-form-item>
         </el-form>
+        <div class="link-box">
+          <router-link :to="{path:'/register'}" class="to-password">忘记密码？</router-link>
+          <router-link :to="{path:'/register'}" class="to-register">去注册</router-link>
+        </div>
         <p class="login-btn" @click="login('ruleForms')">登录</p>
-        <div class="errorTip_wrap" >
+        <div class="errorTip_wrap">
           <div class="errorTip" v-if="errorTip">{{errorMessage}}</div>
         </div>
       </div>
@@ -50,7 +54,6 @@
           } else {
             callback(new Error('请输入正确手机号'));
           }
-
         }
       };
       var checkPassword = (rule, value, callback) => {
@@ -69,12 +72,12 @@
       };
       return {
         ruleform: {
-          userName: "", // 手机号
+          phone: "", // 手机号
           password: "", // 密码
           captchaCode: "", // 验证码
         },
         rules: {
-          userName: [
+          phone: [
             {validator: checkPhone, trigger: 'blur'},
             {}
           ],
@@ -121,42 +124,28 @@
       },
       //登录
       login(formName) {
-
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let loginData = { "code": "2000", "message": "success", "data": { "id": "5c6e61675fe92912f48c5f11", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzcxNTQwNTYsInVzZXJfaWQiOiI1YzZlNjE2NzVmZTkyOTEyZjQ4YzVmMTEiLCJkZXZpY2VfaWQiOiJhZG1pbkRldmljZUlEIn0.OMu1ibaHfM7hFpxX0AVwA0nDIlPOMsGygUSFP19h7xU" } }
-            sessionStorage.setItem("myLogin", JSON.stringify(loginData));
-            this.$router.push("/home")
+            let data = {
+              phone: '+86'+ this.ruleform.phone, // 手机号
+              password: this.ruleform.password, // 密码
+              code: this.ruleform.captchaCode, // 验证码
+            };
+            this.$axios({
+              method: 'post',
+              url: `${this.$baseURL}/v1/rrpoints-saas/web/sessions`,
+              data: this.$querystring.stringify(data)
+            }).then(res => {
+              window.sessionStorage.setItem("userInfo", JSON.stringify(res.data));
+              this.$router.push("/home")
+            }).catch(error => {
+              console.log(error);
+            });
           } else {
             console.log('error submit!!');
             return false;
           }
         });
-
-
-
-        this.getCaptcha();
-        /*let loginData = {
-          username: this.ruleform.userName,
-          password: this.ruleform.password,
-          captcha_id: this.captcha_id,
-          captcha_code: this.captchaCode,
-        };
-        this.$axios({
-          method: "POST",
-          url: `${this.$baseURL}/v1/backstage/sessions`,
-          data: this.$querystring.stringify(loginData)
-        }).then(res => {
-          sessionStorage.setItem("myLogin", JSON.stringify(res.data));
-          this.$router.push("/home")
-        }).catch(error => {
-          this.errorMessage = "登录失败";
-          this.errorTip = true;
-          let that = this;
-          window.setTimeout(function () {
-            that.errorTip = false;
-          }, 2000);
-        })*/
       }
     },
   }
@@ -185,7 +174,7 @@
           font-size: 18px;
           color: #0d0d0d;
           text-align center
-          margin 80px 0 24px 0
+          margin: 75px 0 18px 0;
         }
 
         .input-wraper{
@@ -230,13 +219,23 @@
           background-color: #306af6;
           border-radius: 10px;
           margin 0 auto
-          margin-top 30px
+          margin-top 10px
           margin-right: 10px;
           cursor pointer
           line-height 54px
           text-align center
           color #ffffff
           font-size: 20px;
+        }
+        .link-box{
+          width: 270px;
+          display flex
+          flex-direction row
+          justify-content space-between
+          .to-password{
+          }
+          .to-register{
+          }
         }
         .errorTip_wrap {
           width 100%

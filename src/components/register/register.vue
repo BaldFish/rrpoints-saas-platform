@@ -6,16 +6,16 @@
           <p>已有账号&nbsp;&nbsp;<router-link to="/login">马上登录</router-link></p>
         </div>
         <p class="title">人人积分商户注册</p>
-        <el-form :model="ruleform" :rules="rules" ref="ruleForms" >
-          <el-form-item prop="userName">
+        <el-form :model="ruleform" :rules="rules" ref="ruleform" >
+          <el-form-item prop="phone">
             <div class="input-wraper">
-              <el-input class="phone-wrap" v-model="ruleform.userName" clearable placeholder="请输入手机号"></el-input>
+              <el-input class="phone-wrap" v-model="ruleform.phone" clearable placeholder="请输入手机号"></el-input>
               <img src="@/common/images/icon_user.png" alt="">
             </div>
           </el-form-item>
-          <el-form-item prop="captchaCode" class="code-box">
+          <el-form-item prop="code" class="code-box">
             <div class="input-wraper">
-              <el-input clearable class="text" placeholder="请输入验证码" v-model="ruleform.captchaCode"></el-input>
+              <el-input clearable class="text" placeholder="请输入验证码" v-model="ruleform.code"></el-input>
               <img src="@/common/images/icon_code.png" alt="">
               <img class="captcha-code" @click="getCaptcha" :src="captcha_number" alt="">
             </div>
@@ -26,14 +26,14 @@
               <img src="@/common/images/icon_password.png" alt="">
             </div>
           </el-form-item>
-          <el-form-item prop="checkPassword">
+          <el-form-item prop="repassword">
             <div class="input-wraper">
-              <el-input clearable type="password" class="text" placeholder="请再次输入密码" v-model="ruleform.checkPassword"></el-input>
+              <el-input clearable type="password" class="text" placeholder="请再次输入密码" v-model="ruleform.repassword"></el-input>
               <img src="@/common/images/icon_password.png" alt="">
             </div>
           </el-form-item>
         </el-form>
-        <p class="login-btn" @click="login('ruleForms')">注册</p>
+        <p class="login-btn" @click="register('ruleform')">注册</p>
         <div class="errorTip_wrap" >
           <div class="errorTip" v-if="errorTip">{{errorMessage}}</div>
         </div>
@@ -59,15 +59,14 @@
           } else {
             callback(new Error('请输入正确手机号'));
           }
-
         }
       };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
         } else {
-          if (this.ruleform.checkPassword !== '') {
-            this.$refs.ruleform.validateField('checkPassword');
+          if (this.ruleform.repassword !== '') {
+            this.$refs.ruleform.validateField('repassword');
           }
           callback();
         }
@@ -90,25 +89,25 @@
       };
       return {
         ruleform: {
-          userName: "", // 手机号
+          phone: "", // 手机号
           password: "", // 密码
-          checkPassword: "", // 密码
-          captchaCode: "", // 验证码
+          repassword: "", // 密码
+          code: "", // 验证码
         },
         rules: {
-          userName: [
+          phone: [
             {validator: checkPhone, trigger: 'blur'},
             {}
           ],
           password: [
             {validator: validatePass, trigger: 'blur'},
-            {}
+            { min: 6, max: 20, message: '6-20位数字、字母或特殊符号', trigger: 'blur' }
           ],
-          checkPassword: [
+          repassword: [
             {validator: validatePass2, trigger: 'blur'},
             {}
           ],
-          captchaCode: [
+          code: [
             {validator: checkVerify, trigger: 'blur'},
             { min: 1, max: 4, message: '验证码长度不对', trigger: 'blur' }
           ],
@@ -145,44 +144,30 @@
           console.log(error);
         });
       },
-      //登录
-      login(formName) {
-
+      //注册
+      register(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let loginData = { "code": "2000", "message": "success", "data": { "id": "5c6e61675fe92912f48c5f11", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NzcxNTQwNTYsInVzZXJfaWQiOiI1YzZlNjE2NzVmZTkyOTEyZjQ4YzVmMTEiLCJkZXZpY2VfaWQiOiJhZG1pbkRldmljZUlEIn0.OMu1ibaHfM7hFpxX0AVwA0nDIlPOMsGygUSFP19h7xU" } }
-            sessionStorage.setItem("myLogin", JSON.stringify(loginData));
-            this.$router.push("/home")
+            let data = {
+              phone: '+86'+ this.ruleform.phone, // 手机号
+              password: this.ruleform.password, // 密码
+              repassword: this.ruleform.repassword, // 密码
+              code: this.ruleform.code, // 验证码
+            };
+            this.$axios({
+              method: 'post',
+              url: `${this.$baseURL}/v1/rrpoints-saas/web/signup`,
+              data: this.$querystring.stringify(data)
+            }).then(res => {
+              this.$router.push("/login")
+            }).catch(error => {
+              console.log(error);
+            });
           } else {
             console.log('error submit!!');
             return false;
           }
         });
-
-
-
-        this.getCaptcha();
-        /*let loginData = {
-          username: this.ruleform.userName,
-          password: this.ruleform.password,
-          captcha_id: this.captcha_id,
-          captcha_code: this.captchaCode,
-        };
-        this.$axios({
-          method: "POST",
-          url: `${this.$baseURL}/v1/backstage/sessions`,
-          data: this.$querystring.stringify(loginData)
-        }).then(res => {
-          sessionStorage.setItem("myLogin", JSON.stringify(res.data));
-          this.$router.push("/home")
-        }).catch(error => {
-          this.errorMessage = "登录失败";
-          this.errorTip = true;
-          let that = this;
-          window.setTimeout(function () {
-            that.errorTip = false;
-          }, 2000);
-        })*/
       }
     },
   }
