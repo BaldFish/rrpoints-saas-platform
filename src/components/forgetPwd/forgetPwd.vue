@@ -223,7 +223,7 @@
             };
             this.$axios({
               method: 'post',
-              url: `${this.$baseURL}/v1/rrpoints-saas/web/${this.user_id}/password`,
+              url: `${this.$baseURL}/v1/rrpoints-saas/web/+86${this.ruleform.phone}/password`,
               data: this.$querystring.stringify(data)
             }).then(res => {
               this.$router.push("/home")
