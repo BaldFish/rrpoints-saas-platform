@@ -183,7 +183,7 @@
             //校验短信验证码
             this.$axios({
               method: 'get',
-              url: `${this.$baseURL}/v1/sms/+86${this.ruleform.phone}/code/${this.ruleform.captchaCode}`,
+              url: `${this.$baseURL}/v1/sms/+86${this.ruleform.phone}/code/${this.ruleform.code}`,
               data: this.$querystring.stringify({
                 phone: "+86" + this.ruleform.phone, //手机号
                 type: 3 //1-注册，2-修改密码, 3-登录
