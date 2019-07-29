@@ -12,7 +12,7 @@
                 <img src="@/common/images/icon_user.png" alt="">
               </div>
             </el-form-item>
-            <el-form-item prop="captchaCode" class="code-box">
+            <el-form-item prop="captchaCode" class="code-box" :error="errorCode">
               <div class="input-wraper">
                 <el-input clearable class="text" placeholder="请输入短信验证码" v-model="ruleform.captchaCode"></el-input>
                 <img src="@/common/images/icon_code.png" alt="">
@@ -133,7 +133,7 @@
         codeValue: true,
         errorMsg: "",
         isNext: true,
-
+        errorCode: "", //验证码错误信息
       }
     },
     beforeMount() {
@@ -206,6 +206,7 @@
               this.isNext = false
             }).catch(error => {
               console.log(error);
+              this.errorCode = "短信验证码错误"
             });
           } else {
             console.log('error submit!!');

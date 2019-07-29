@@ -10,13 +10,13 @@
               <img src="@/common/images/icon_user.png" alt="">
             </div>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="password" :error="errorAccount">
             <div class="input-wraper">
               <el-input clearable type="password" class="text" placeholder="请输入密码" v-model="ruleform.password"></el-input>
               <img src="@/common/images/icon_password.png" alt="">
             </div>
           </el-form-item>
-          <el-form-item prop="captchaCode" class="code-box">
+          <el-form-item prop="captchaCode" class="code-box" :error="errorCode">
             <div class="input-wraper">
               <el-input clearable class="text" placeholder="请输入验证码" v-model="ruleform.captchaCode"></el-input>
               <img src="@/common/images/icon_code.png" alt="">
@@ -94,6 +94,8 @@
         captcha_id: "",
         errorMessage: "",//错误提示信息
         errorTip: false,
+        errorCode: "", //验证码错误信息
+        errorAccount: "", //账户或密码错误
       }
     },
     created() {
@@ -125,21 +127,33 @@
       login(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let data = {
-              phone: '+86'+ this.ruleform.phone, // 手机号
-              password: this.ruleform.password, // 密码
-              code: this.ruleform.captchaCode, // 验证码
-            };
+            //校验图形验证码
             this.$axios({
-              method: 'post',
-              url: `${this.$baseURL}/v1/rrpoints-saas/web/sessions`,
-              data: this.$querystring.stringify(data)
+              method: 'get',
+              url: `${this.$baseURL}/v1/captcha/${this.captcha_id}/code/${this.ruleform.captchaCode}`
             }).then(res => {
-              window.sessionStorage.setItem("userInfo", JSON.stringify(res.data));
-              this.$router.push("/home")
+              //去登录
+              let data = {
+                phone: '+86'+ this.ruleform.phone, // 手机号
+                password: this.ruleform.password, // 密码
+                code: this.ruleform.captchaCode, // 验证码
+              };
+              this.$axios({
+                method: 'post',
+                url: `${this.$baseURL}/v1/rrpoints-saas/web/sessions`,
+                data: this.$querystring.stringify(data)
+              }).then(res => {
+                window.sessionStorage.setItem("userInfo", JSON.stringify(res.data));
+                this.$router.push("/home")
+              }).catch(error => {
+                if (error.response.data.code === "10005"){
+                  this.errorAccount = "账户或密码错误"
+                }
+              })
             }).catch(error => {
               console.log(error);
-            });
+              this.errorCode = "图形验证码错误"
+            })
           } else {
             console.log('error submit!!');
             return false;

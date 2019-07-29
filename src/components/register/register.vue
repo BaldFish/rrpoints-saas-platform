@@ -13,7 +13,7 @@
               <img src="@/common/images/icon_user.png" alt="">
             </div>
           </el-form-item>
-          <el-form-item prop="code" class="code-box">
+          <el-form-item prop="code" class="code-box" :error="errorCode">
             <div class="input-wraper">
               <el-input clearable class="text" placeholder="请输入验证码" v-model="ruleform.code"></el-input>
               <img src="@/common/images/icon_code.png" alt="">
@@ -122,6 +122,7 @@
         errorTip: false,
         second: 60,// 发送验证码倒计时
         codeValue: true,
+        errorCode: "", //验证码错误信息
       }
     },
     created() {
@@ -207,6 +208,7 @@
               });
             }).catch(error => {
               console.log(error);
+              this.errorCode = "短信验证码错误"
             });
           } else {
             console.log('error submit!!');
