@@ -8,9 +8,9 @@
         </div>
         <div class="content-query">
           <label>钱包地址：</label>
-          <el-input v-model="address" placeholder="请输入钱包地址" clearable style="width: 500px"></el-input>
+          <el-input v-model="wallet_addr" placeholder="请输入钱包地址" clearable style="width: 500px"></el-input>
           <label>店铺名称：</label>
-          <el-input v-model="idcard" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
+          <el-input v-model="store_name" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <br/>
@@ -41,9 +41,9 @@
               <el-table-column label="钱包地址" align="center" min-width="130" sortable='custom'>
                 <template slot-scope="scope">
 <!--
-                  <span>{{ scope.row.address.substr(0,10) + "........" + scope.row.address.substr(scope.row.address.length-10,scope.row.address.length)}}</span>
+                  <span>{{ scope.row.wallet_addr.substr(0,10) + "........" + scope.row.wallet_addr.substr(scope.row.wallet_addr.length-10,scope.row.wallet_addr.length)}}</span>
 -->
-                  <span>{{ scope.row.address }}</span>
+                  <span>{{ scope.row.wallet_addr }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="店铺名称" align="center" min-width="130" sortable='custom'>
@@ -161,9 +161,9 @@
             "location": "北京市丰台区西罗园街道西罗园南里44号"
           }
         ],
-        phone: "",
-        name: "",
-        idcard: "",
+        //phone: "",
+        //name: "",
+        store_name: "",
         multipleSelection: [],
         //multipleDelete: [],
         loading: false,
@@ -172,8 +172,8 @@
         page: 1,
         limit: 10,
         time:["",""],
-        email:"",
-        address:"",
+        //email:"",
+        wallet_addr:"",
 
         platform:"",
         appname:"",
@@ -186,8 +186,11 @@
     beforeMount() {
     },
     mounted() {
-      this.token = JSON.parse(sessionStorage.getItem("myLogin")).data.token;
-      this.getUserList()
+      if (sessionStorage.getItem("userInfo")){
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+        this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
+      }
+      this.getShopsList()
     },
     watch: {
       time: function () {
@@ -208,20 +211,17 @@
       }
     },
     methods: {
-      //获取用户列表
-      getUserList() {
-        //手机号格式化
-        let initPhone = "";
-        if(this.phone){
-          initPhone = "+86" + this.phone
-        }
+      //查询店铺列表
+      getShopsList() {
         this.$axios({
           method: "GET",
-          url: `${this.$baseURL}/v1/backstage/users?phone=${initPhone}&name=${this.name}&email=${this.email}&idcard=${this.idcard}&address=${this.address}&platform=${this.platform}&appname=${this.appname}&created_since=${this.time[0]}&created_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/stores?user_id=${this.user_id}&store_name=${this.store_name}&wallet_addr=${this.wallet_addr}&date_from=${this.time[0]}&date_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
           headers: {
             'X-Access-Token': this.token,
           }
         }).then(res => {
+
+          console.log(res.data)
           //this.totalUser = res.data.count;
           this.count_user = res.data.count;
           this.count_with_address = res.data.count_with_address;
@@ -246,7 +246,7 @@
         if(column.column.label == "邮箱"){
           this.sort = "email";
         }else if(column.column.label == "钱包地址"){
-          this.sort = "address";
+          this.sort = "wallet_addr";
         }else if(column.column.label == "注册时间"){
           this.sort = "created_at";
         }else if(column.column.label == "手机号码"){
@@ -254,7 +254,7 @@
         }else if(column.column.label == "真实姓名"){
           this.sort = "name";
         }else if(column.column.label == "身份证号"){
-          this.sort = "idcard";
+          this.sort = "store_name";
         }else if(column.column.label == "元积分"){
           this.sort = "TSD";
         }else if(column.column.label == "广告豆"){
@@ -268,16 +268,16 @@
         }
         if (column.order == "descending"){
           this.direction = "desc";
-          this.getUserList()
+          this.getShopsList()
         } else if (column.order == "ascending"){
           this.direction = "asc";
-          this.getUserList()
+          this.getShopsList()
         }
       },
       //点击搜索按钮搜索用户列表
       btnSearchUserList() {
         this.page = 1;//按钮搜索时初始化page
-        this.getUserList()
+        this.getShopsList()
       },
       //获取所点击行的信息
       getClickInfo(row){
@@ -288,12 +288,12 @@
       //更改每页显示条数
       handleSizeChange(val) {
         this.limit = val;
-        this.getUserList()
+        this.getShopsList()
       },
       //切换分页
       handleCurrentChange(val) {
         this.page = val;
-        this.getUserList()
+        this.getShopsList()
       },
       //删除按钮删除方法
       handleDeletes() {
@@ -314,7 +314,7 @@
             }
           }).then((res) => {
             this.page=1;
-            this.getUserList();
+            this.getShopsList();
           }).catch((err) => {
           })
         }).catch(() => {
