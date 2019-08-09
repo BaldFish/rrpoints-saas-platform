@@ -7,10 +7,10 @@
           <h3>服务包管理</h3>
         </div>
         <div class="content-query">
-          <label>钱包地址：</label>
-          <el-input v-model="address" placeholder="请输入钱包地址" clearable style="width: 500px"></el-input>
+          <label>店铺名称：</label>
+          <el-input v-model="store_name" placeholder="请输入店铺名称" clearable style="width: 500px"></el-input>
           <label>服务包名称：</label>
-          <el-input v-model="idcard" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
+          <el-input v-model="service_name" placeholder="请输入服务包名称" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <br/>
@@ -27,24 +27,24 @@
           <div class="table-title">
             <div class="points-box">
               <div class="shop-num">
-                <h4>店铺总数</h4>
-                <p>80</p>
+                <h4>服务包总数</h4>
+                <p>{{totalPkgs}}</p>
               </div>
-              <div class="yuan-num">
+             <!-- <div class="yuan-num">
                 <h4>元积分</h4>
                 <p>9000</p>
               </div>
               <div class="taibao-num">
                 <h4>太保积分</h4>
                 <p>2000</p>
-              </div>
+              </div>-->
             </div>
-            <div class="add-package"  @click="dialogFormVisible = true">
+            <div class="add-package"  @click="openModal()">
               <p>新增服务包</p>
             </div>
           </div>
           <div class="table-details">
-            <el-table :data="userList" style="width: 100%" ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange"
+            <el-table :data="servicePkgList" style="width: 100%" ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange"
                        @sort-change='sortChange'>
               <el-table-column type="selection" align="center" width="50">
               </el-table-column>
@@ -52,42 +52,37 @@
               </el-table-column>
               <el-table-column label="店铺名称" align="center" min-width="180" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.shopName }}</span>
+                  <span>{{ scope.row.store_name }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="服务包名称" align="center" min-width="120" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.pakgName }}</span>
+                  <span>{{ scope.row.service_name }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="创建时间" align="center" min-width="120" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.time }}</span>
+                  <span>{{ scope.row.created_time }}</span>
                 </template>
               </el-table-column>
-              <el-table-column label="元积分" align="center" sortable='custom'>
+              <el-table-column label="价格" align="center" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.yuanPoints }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="太保积分" align="center" sortable='custom'>
-                <template slot-scope="scope">
-                  <span>{{ scope.row.taiPoints }}</span>
+                  <span>{{ scope.row.price }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="操作" min-width="120"  align="center">
                 <template slot-scope="scope">
                   <div class="operate">
-                    <div class="upper" v-if="isUpper">
-                      <span @click="statusChange(isUpper)">上架</span>
+                    <div class="upper" v-if="scope.row.state === 1?true:false">
+                      <span @click="statusChange(scope.row)">上架</span>
                       <span>已下架</span>
                     </div>
                     <div class="under" v-else>
                       <span>已上架</span>
-                      <span @click="statusChange(isUpper)">下架</span>
+                      <span @click="statusChange(scope.row)">下架</span>
                     </div>
                     <div class="edit">
-                      <span  @click="dialogFormVisible = true">编辑</span>
+                      <span @click="editModal(scope.row)">编辑</span>
                     </div>
                   </div>
                 </template>
@@ -114,32 +109,38 @@
       </div>
     </div>
 
-    <el-dialog title="新增服务包" :visible.sync="dialogFormVisible" center>
+    <el-dialog :title="isAddNew?'新增服务包':'编辑服务包'" :visible.sync="dialogFormVisible" center>
       <el-form :model="form" :rules="rules" ref="form">
-        <el-form-item label="指定店铺" prop="region"  :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）" value="shanghai"></el-option>
-            <el-option label="王宏洗车店维修保养" value="beijing"></el-option>
+        <el-form-item label="指定店铺" prop="store_id"  :label-width="formLabelWidth">
+          <el-select v-model="form.store_id" placeholder="请选择活动区域">
+            <el-option
+              v-for="item in shopsList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="服务包" prop="name"  :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item label="服务包" prop="service_name"  :label-width="formLabelWidth">
+          <el-input v-model="form.service_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="积分种类"  prop="name2" :label-width="formLabelWidth">
-          <el-input v-model="form.name2" autocomplete="off"></el-input>
+        <el-form-item label="积分种类" :label-width="formLabelWidth">
+          <!--<el-input v-model="form.name2" autocomplete="off"></el-input>-->
+          <p>积分</p>
         </el-form-item>
-        <el-form-item label="积分金额" prop="name3"  :label-width="formLabelWidth">
-          <el-input v-model="form.name3" autocomplete="off"></el-input>
+        <el-form-item label="积分金额" prop="price"  :label-width="formLabelWidth">
+          <el-input v-model="form.price" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="状态" prop="resource"  :label-width="formLabelWidth">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="上架"></el-radio>
-            <el-radio label="下架"></el-radio>
+        <el-form-item label="状态" prop="state"  :label-width="formLabelWidth">
+          <el-radio-group v-model="form.state">
+            <el-radio :label="0">上架</el-radio>
+            <el-radio :label="1">下架</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <span class="confirm" @click="modalSubmit('form')" >确定</span>
+        <span class="confirm" @click="modalSubmit('form')" v-if="isAddNew">确定</span>
+        <span class="confirm" @click="editSubmit('form')" v-else>确定</span>
         <span class="cancel" @click="modalCancel()">取消</span>
       </div>
     </el-dialog>
@@ -152,90 +153,13 @@
     components: {},
     data() {
       return {
-        totalUser: 100,
-        count_user: "",
-        count_with_address: "",
-        count_with_idcard: "",
-        count_with_vehicle: "",
-        totalYJF: "",
-        totalYDD: "",
-        totalGGD: "",
-        userList: [
-          {
-            "shopName": "月福洗车",
-            "pakgName": "标准洗车1次",
-            "address":"0x976ff0wj********1q0df224wx0",
-            "time": "2019-12-05 14:45:09",
-            "yuanPoints": "6203",
-            "taiPoints": "1540",
-          },
-          {
-            "shopName": "北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）",
-            "pakgName": "发动机清洗1次",
-            "time": "2019-05-22 10:11:20",
-            "yuanPoints": "1262",
-            "taiPoints": "450",
-          },
-          {
-            "shopName": "昌平奔驰4S店分院",
-            "pakgName": "更换空气芯、空调芯2次",
-            "time": "2018-05-22 13:01:50",
-            "yuanPoints": "4481",
-            "taiPoints": "3855",
-          },
-          {
-            "shopName": "王宏洗车店维修保养",
-            "pakgName": "更换机油1次",
-            "time": "2019-06-27 17:25:25",
-            "yuanPoints": "5800",
-            "taiPoints": "1230",
-          },
-          {
-            "shopName": "北京市德安汽车修理厂",
-            "pakgName": "刹车片更换4次",
-            "time": "2019-09-27 16:16:28",
-            "yuanPoints": "1600",
-            "taiPoints": "462",
-          },
-          {
-            "shopName": "宝马4s店",
-            "pakgName": "四轮定位、刹车系统保养1次",
-            "time": "2018-02-16 17:16:17",
-            "yuanPoints": "6180",
-            "taiPoints": "5234",
-          },
-          {
-            "shopName": "北京鹏程汽修",
-            "pakgName": "油门踏板调教1次",
-            "time": "2018-04-16 10:28:05",
-            "yuanPoints": "8128",
-            "taiPoints": "4520",
-          },
-          {
-            "shopName": "有壹手快修(京密路店)",
-            "pakgName": "更换火花塞1次",
-            "time": "2018-10-22 11:32:12",
-            "yuanPoints": "2756",
-            "taiPoints": "968",
-          },
-          {
-            "shopName": "万达汽车修理有限公司(万达洗车)",
-            "pakgName": "更换防冻液和刹车油2次",
-            "time": "2019-07-03 06:54:17",
-            "yuanPoints": "3270",
-            "taiPoints": "680",
-          },
-          {
-            "shopName": "汽车维修养护洗车",
-            "pakgName": "更换机油滤清器1次",
-            "time": "2019-09-15 08:18:55",
-            "yuanPoints": "8106",
-            "taiPoints": "6700",
-          }
-        ],
+        totalUser: 0,
+
+
+        servicePkgList: [],
         phone: "",
         name: "",
-        idcard: "",
+        service_name: "",
         multipleSelection: [],
         //multipleDelete: [],
         loading: false,
@@ -245,43 +169,38 @@
         limit: 10,
         time:["",""],
         email:"",
-        address:"",
+        store_name:"",
 
         platform:"",
         appname:"",
         direction:"",
         sort:"",
-        isUpper: true,
+
+        isAddNew: true,
+        totalPkgs: 0, //服务包总数
+        shopsList:[], //店铺列表
+        service_id: "", //服务包id
 
         dialogFormVisible: false,
         form: {
-          name: '',
-          name2: '',
-          name3: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          service_name: '',
+          price: '',
+          store_id: '',
+          state: '',
         },
         formLabelWidth: '120px',
 
         rules: {
-          region: [
+          store_id: [
             { required: true, message: '请选择店铺名称', trigger: 'change' }
           ],
-          name: [
+          service_name: [
             { required: true, message: '请输入服务包名称', trigger: 'blur' }
           ],
-          name2: [
-            { required: true, message: '请输入积分种类', trigger: 'blur' }
-          ],
-          name3: [
+          price: [
             { required: true, message: '请输入积分金额', trigger: 'blur' }
           ],
-          resource: [
+          state: [
             { required: true, message: '请选择状态', trigger: 'change' }
           ],
 
@@ -293,8 +212,12 @@
     beforeMount() {
     },
     mounted() {
-      this.token = JSON.parse(sessionStorage.getItem("myLogin")).data.token;
-      this.getUserList()
+      if (sessionStorage.getItem("userInfo")){
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+        this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
+      }
+      this.getUserList();
+      this.getShopsList()
     },
     watch: {
       time: function () {
@@ -303,6 +226,10 @@
         } else {
           this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
           this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();
+          /*if (this.time[0] && this.time[1]){
+        this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
+        this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
+      }*/
         }
       }
     },
@@ -315,65 +242,151 @@
       }
     },
     methods: {
-      statusChange(isUpper){
-        this.isUpper = !this.isUpper
-      },
-      modalSubmit(form){
-
-        this.$refs[form].validate((valid) => {
-          if (valid) {
-            this.modalCancel()
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-
-      },
-      modalCancel(){
-        this.dialogFormVisible = false;
-        this.form = {
-          name: '',
-            name2: '',
-            name3: '',
-            region: '',
-            date1: '',
-            date2: '',
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: ''
-        }
-      },
-      //获取用户列表
-      getUserList() {
-        //手机号格式化
-        let initPhone = "";
-        if(this.phone){
-          initPhone = "+86" + this.phone
-        }
+      // 服务包上架/下架
+      statusChange(row){
         this.$axios({
-          method: "GET",
-          url: `${this.$baseURL}/v1/backstage/users?phone=${initPhone}&name=${this.name}&email=${this.email}&idcard=${this.idcard}&address=${this.address}&platform=${this.platform}&appname=${this.appname}&created_since=${this.time[0]}&created_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          method: 'post',
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/services/${row.id}`,
+          data: this.$querystring.stringify({
+            user_id: this.user_id,
+            state: row.state === 0 ? 1 : 0
+          }),
           headers: {
             'X-Access-Token': this.token,
           }
         }).then(res => {
-          //this.totalUser = res.data.count;
-          this.count_user = res.data.count;
-          this.count_with_address = res.data.count_with_address;
-          this.count_with_idcard = res.data.count_with_idcard;
-          this.count_with_vehicle = res.data.count_with_vehicle;
-          this.totalYJF = res.data.TSD;
-          this.totalYDD = res.data.YDD;
-          this.totalGGD = res.data.ADE;
-          let that = this;
-          res.data.users.forEach(function (item) {
-            if (item.created_at) {
-              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
+          this.getUserList()
+        }).catch(error => {
+        })
+      },
+      //打开modal
+      openModal(){
+        this.dialogFormVisible = true;
+        this.isAddNew = true;
+        this.form = {
+          service_name: '',
+          price: '',
+          store_id: '',
+          state: '',
+        }
+      },
+      // 新增服务包
+      modalSubmit(form){
+        this.$refs[form].validate((valid) => {
+          if (valid) {
+            let data = {
+              user_id: this.user_id,
+              store_id: this.form.store_id,
+              service_name: this.form.service_name,
+              price: this.form.price,
+              state: this.form.state,
+            };
+            this.$axios({
+              method: 'post',
+              url: `${this.$baseURL}/v1/rrpoints-saas/web/services`,
+              data: this.$querystring.stringify(data),
+              headers: {
+                'X-Access-Token': this.token,
+              }
+            }).then(res => {
+              this.modalCancel();
+              this.getUserList()
+            }).catch(error => {
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        })
+      },
+      //编辑modal
+      editModal(row){
+        this.dialogFormVisible = true;
+        this.isAddNew = false;
+        this.form = {
+          store_id: "",
+          service_name: row.service_name,
+          price: row.price,
+          state: row.state,
+        };
+        this.service_id = row.id;
+        if (this.shopsList){
+          this.shopsList.forEach((function (item) {
+            if (item.name === row.store_name){
+              this.form.store_id = item.id
             }
-          });
-          //this.userList = res.data.users;
+          }).bind(this))
+        }
+      },
+      //编辑服务包
+      editSubmit(form){
+        this.$refs[form].validate((valid) => {
+          if (valid) {
+            let data = {
+              user_id: this.user_id,
+              store_id: this.form.store_id,
+              service_name: this.form.service_name,
+              price: this.form.price,
+              state: this.form.state,
+            };
+            this.$axios({
+              method: 'post',
+              url: `${this.$baseURL}/v1/rrpoints-saas/web/services/${this.service_id}`,
+              data: this.$querystring.stringify(data),
+              headers: {
+                'X-Access-Token': this.token,
+              }
+            }).then(res => {
+              this.modalCancel();
+              this.getUserList()
+            }).catch(error => {
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        })
+      },
+      //关闭modal
+      modalCancel(){
+        this.dialogFormVisible = false;
+        this.form = {
+          service_name: '',
+          price: '',
+          store_id: '',
+          state: '',
+        }
+      },
+      //查询店铺列表
+      getShopsList() {
+        this.$axios({
+          method: "GET",
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/stores?user_id=${this.user_id}&date_from=${this.time[0]}&date_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          headers: {
+            'X-Access-Token': this.token,
+          }
+        }).then(res => {
+          this.shopsList = res.data.data.stores;
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      //获取服务包列表
+      getUserList() {
+        /*if (this.time[0] && this.time[1]){
+          this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
+          this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
+        }*/
+        this.$axios({
+          method: "GET",
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/services?user_id=${this.user_id}&service_name=${this.service_name}&store_name=${this.store_name}&start_time=${this.time[0]}&end_time=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          headers: {
+            'X-Access-Token': this.token,
+          }
+        }).then(res => {
+          this.totalUser = Number(res.data.data.total);
+          this.totalPkgs = res.data.data.total;
+          this.servicePkgList = res.data.data.services
         }).catch(error => {
           console.log(error)
         })
@@ -416,12 +429,6 @@
         this.page = 1;//按钮搜索时初始化page
         this.getUserList()
       },
-      //获取所点击行的信息
-      getClickInfo(row){
-        sessionStorage.setItem("clickInfo", JSON.stringify(row));
-        //this.$router.push("/home/userManagement/userDetails");
-        window.open("/home/userManagement/userDetails",'_blank');
-      },
       //更改每页显示条数
       handleSizeChange(val) {
         this.limit = val;
@@ -445,7 +452,7 @@
         }).then(() => {
           this.$axios({
             method: "DELETE",
-            url: `${this.$baseURL}/v1/backstage/users/${this.multipleDelete[0]}`,
+            url: `${this.$baseURL}/v1/rrpoints-saas/web/services/${this.multipleDelete[0]}?user_id=${this.user_id}`,
             headers: {
               'X-Access-Token': this.token,
             }

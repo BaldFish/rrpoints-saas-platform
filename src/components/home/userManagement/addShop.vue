@@ -11,38 +11,54 @@
           <br>
           <br>
           <label>商家类型：</label>
-          <el-input v-model="address" placeholder="请输入商家类型" clearable style="width: 380px"></el-input>
+          <el-select v-model="type" placeholder="请选择商家类型" style="width: 380px">
+            <el-option
+              v-for="item in shopTypes"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+
           <label>店铺名称：</label>
-          <el-input v-model="address" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
+          <el-input v-model="name" placeholder="请输入店铺名称" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <label>店铺联系方式：</label>
-          <el-input v-model="idcard" placeholder="请输入联系方式" clearable style="width: 380px"></el-input>
+          <el-input v-model="contact" placeholder="请输入联系方式" clearable style="width: 380px"></el-input>
           <label>店铺地址：</label>
-          <el-input v-model="idcard" placeholder="请输入店铺地址" clearable style="width: 380px"></el-input>
+          <el-input v-model="addr" placeholder="请输入店铺地址" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <label>精修车型：</label>
-          <el-input v-model="idcard" placeholder="请输入精修车型" clearable style="width: 380px"></el-input>
+          <el-input v-model="serve_cars" placeholder="请输入精修车型" clearable style="width: 380px"></el-input>
           <label>服务范围：</label>
-          <el-input v-model="idcard" placeholder="请输入服务范围" clearable style="width: 380px"></el-input>
+          <el-input v-model="serve_range" placeholder="请输入服务范围" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <label>营业时间：</label>
-          <el-input v-model="idcard" placeholder="请输入营业时间" clearable style="width: 380px"></el-input>
+          <el-input v-model="serve_time" placeholder="请输入营业时间" clearable style="width: 380px"></el-input>
           <label>签名：</label>
-          <el-input v-model="idcard" placeholder="请输入签名" clearable style="width: 380px"></el-input>
+          <el-input v-model="sign" placeholder="请输入签名" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <label>商家介绍：</label>
-          <el-input v-model="idcard" placeholder="请输入商家介绍" clearable style="width: 888px"></el-input>
+          <el-input v-model="introduce" placeholder="请输入商家介绍" clearable style="width: 888px"></el-input>
           <br/>
           <br/>
           <label>上传图片：</label>
           <div class="img-box">
             <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadUrl"
+              :headers="{'X-Access-Token': token}"
+              :data="{
+                'user_id': user_id,
+                'img': img,
+                'ext': ext,
+              }"
               list-type="picture-card"
+              :on-change="handleImgChange"
+              :on-success="handleAvatarSuccess"
               :on-preview="handlePictureCardPreview"
               :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
@@ -78,37 +94,57 @@
     components: {},
     data() {
       return {
+        token:"",
+        user_id:"",
+        type:"",
+        shopTypes: [
+          {
+            id: 0,
+            name: "所有"
+          },
+          {
+            id: 1,
+            name: "4S店"
+          },
+          {
+            id: 2,
+            name: "停车"
+          },
+          {
+            id: 3,
+            name: "加油"
+          },
+          {
+            id: 4,
+            name: "充电"
+          },
+          {
+            id: 5,
+            name: "洗车"
+          }
+        ],
+        name: "",
+        contact: "",
+        addr: "",
+        serve_cars: "",
+        serve_range: "",
+        serve_time: "",
+        sign: "",
+        introduce: "",
+        //上传数据
+        uploadUrl:`${this.$baseURL}/v1/rrpoints-saas/resources/upload`,
+        /*uploadHeaders:{'X-Access-Token': this.token},
+        uploadData:{
+          user_id: this.user_id,
+          img: "", // 图片数据的base64编码
+          ext: "", // 扩展名
+        },*/
+
+        img: "", // 图片数据的base64编码
+        ext: "", // 扩展名
+
         dialogImageUrl: '',
         dialogVisible: false,
-
-
-        totalUser: 10,
-        count_user: "",
-        count_with_address: "",
-        count_with_idcard: "",
-        count_with_vehicle: "",
-        totalYJF: "",
-        totalYDD: "",
-        totalGGD: "",
-        userList: [],
-        phone: "",
-        name: "",
-        idcard: "",
-        multipleSelection: [],
-        //multipleDelete: [],
-        loading: false,
-        currentPage: 1,
-        //total: 10,
-        page: 1,
-        limit: 10,
-        time:["",""],
-        email:"",
-        address:"",
-
-        platform:"",
-        appname:"",
-        direction:"",
-        sort:"",
 
         center: {
           lng: 116.404,
@@ -122,162 +158,140 @@
     beforeMount() {
     },
     mounted() {
-      this.token = JSON.parse(sessionStorage.getItem("myLogin")).data.token;
-      this.getUserList()
-    },
-    watch: {
-      time: function () {
-        if(this.time===null){
-          this.time=["",""]
-        } else {
-          this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
-          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();
-        }
-      }
-    },
-    computed: {
-      //筛查出选中的数据的user_id组成的数组
-      multipleDelete:function () {
-        return this.$_.map(this.multipleSelection, function (item) {
-          return item.id
-        });
+      if (sessionStorage.getItem("userInfo")){
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+        this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
       }
     },
     methods: {
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        console.log(file,"handleRemove");
+        console.log(fileList,"handleRemove");
       },
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
       },
+      //JS字符串截取（获取指定字符后面的所有字符内容）
+      getCaption(obj){
+        var index=obj.lastIndexOf("/");
+        obj=obj.substring(index+1,obj.length);
+        return obj;
+      },
+      //图片转Base64
+      getBase64Image (url,callback) {
+        /*var canvas = document.createElement("canvas"); //创建canvas DOM元素，并设置其宽高和图片一样
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, img.width, img.height); //使用画布画图
+        var dataURL = canvas.toDataURL("image/" + ext); //返回的是一串Base64编码的URL并指定格式
+        canvas = null; //释放
+        return dataURL;*/
 
+        var canvas = document.createElement('canvas'),
+          ctx = canvas.getContext('2d'),
+          img = new Image;
+        img.crossOrigin = 'Anonymous';
+        img.onload = function(){
+          canvas.height = img.height;
+          canvas.width = img.width;
+          ctx.drawImage(img,0,0);
+          var dataURL = canvas.toDataURL('image/png');
+          callback(dataURL);
+          canvas = null;
+        };
+        img.src = url;
+      },
+      getBase64(imgUrl) {
+        window.URL = window.URL || window.webkitURL;
+        var xhr = new XMLHttpRequest();
+        xhr.open("get", imgUrl, true);
+        //var base64Address = "";
+        // 至关重要
+        xhr.responseType = "blob";
+        xhr.onload = function () {
+          if (this.status == 200) {
+            //得到一个blob对象
+            var blob = this.response;
+            // 至关重要
+            let oFileReader = new FileReader();
+            oFileReader.onloadend = function (e) {
+              let base64 = e.target.result;
+              //base64Address = e.target.result;
+              console.log("base64>>", base64)
+
+            };
+            oFileReader.readAsDataURL(blob);
+
+           // return window.URL.createObjectURL(blob)
+
+            console.log(window.URL.createObjectURL(blob),"6666")
+          }
+        };
+        xhr.send();
+        //console.log("666>>", base64Address)
+
+      },
+      //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+      handleImgChange(file, fileList){
+        //console.log(file);
+        this.ext = this.getCaption(file.raw.type);
+        this.img = this.getBase64Image(file.url.substring(5))
+        console.log(  this.ext);
+        console.log(  this.img);
+
+
+
+      },
+      //图片上传成功钩子
+      handleAvatarSuccess(res, file, fileList){
+
+        console.log(res,"res")
+        console.log(file,"file")
+        console.log(fileList,"fileList")
+      },
 
       getPosition (e) {
         alert(`${e.point.lng} / ${e.point.lat}`)
       },
 
+      //添加店铺
       addNewShop(){
-        this.$router.push("/home/userManagement/userQuery")
-      },
+        let data = {
+          user_id: this.user_id,
+          type: this.type,
+          name: this.name,
+          contact: this.contact,
+          addr: this.addr,
+          serve_cars: this.serve_cars,
+          serve_range: this.serve_range,
+          serve_time: this.serve_time,
+          sign: this.sign,
+          introduce: this.introduce,
 
-      //获取用户列表
-      getUserList() {
-        //手机号格式化
-        let initPhone = "";
-        if(this.phone){
-          initPhone = "+86" + this.phone
-        }
+          longitude: this.longitude,
+          latitude: this.latitude,
+          region_code: this.region_code,
+          icons: this.icons,
+
+        };
         this.$axios({
-          method: "GET",
-          url: `${this.$baseURL}/v1/backstage/users?phone=${initPhone}&name=${this.name}&email=${this.email}&idcard=${this.idcard}&address=${this.address}&platform=${this.platform}&appname=${this.appname}&created_since=${this.time[0]}&created_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          method: 'post',
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/stores`,
+          data: this.$querystring.stringify(data),
           headers: {
             'X-Access-Token': this.token,
           }
         }).then(res => {
-          this.totalUser = res.data.count;
-          this.count_user = res.data.count;
-          this.count_with_address = res.data.count_with_address;
-          this.count_with_idcard = res.data.count_with_idcard;
-          this.count_with_vehicle = res.data.count_with_vehicle;
-          this.totalYJF = res.data.TSD;
-          this.totalYDD = res.data.YDD;
-          this.totalGGD = res.data.ADE;
-          let that = this;
-          res.data.users.forEach(function (item) {
-            if (item.created_at) {
-              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
-            }
-          });
-          this.userList = res.data.users;
+
+
+          this.$router.push("/home/userManagement/shopsQuery")
         }).catch(error => {
-          console.log(error)
         })
       },
-      //排序
-      sortChange: function(column, prop, order) {
-        if(column.column.label == "邮箱"){
-          this.sort = "email";
-        }else if(column.column.label == "钱包地址"){
-          this.sort = "address";
-        }else if(column.column.label == "注册时间"){
-          this.sort = "created_at";
-        }else if(column.column.label == "手机号码"){
-          this.sort = "phone";
-        }else if(column.column.label == "真实姓名"){
-          this.sort = "name";
-        }else if(column.column.label == "身份证号"){
-          this.sort = "idcard";
-        }else if(column.column.label == "元积分"){
-          this.sort = "TSD";
-        }else if(column.column.label == "广告豆"){
-          this.sort = "ADE";
-        }else if(column.column.label == "元豆豆"){
-          this.sort = "YDD";
-        }else if(column.column.label == "平台"){
-          this.sort = "platform";
-        }else if(column.column.label == "应用"){
-          this.sort = "appname";
-        }
-        if (column.order == "descending"){
-          this.direction = "desc";
-          this.getUserList()
-        } else if (column.order == "ascending"){
-          this.direction = "asc";
-          this.getUserList()
-        }
-      },
-      //点击搜索按钮搜索用户列表
-      btnSearchUserList() {
-        this.page = 1;//按钮搜索时初始化page
-        this.getUserList()
-      },
-      //获取所点击行的信息
-      getClickInfo(row){
-        sessionStorage.setItem("clickInfo", JSON.stringify(row));
-        //this.$router.push("/home/userManagement/userDetails");
-        window.open("/home/userManagement/userDetails",'_blank');
-      },
-      //更改每页显示条数
-      handleSizeChange(val) {
-        this.limit = val;
-        this.getUserList()
-      },
-      //切换分页
-      handleCurrentChange(val) {
-        this.page = val;
-        this.getUserList()
-      },
-      //删除按钮删除方法
-      handleDeletes() {
-        if (this.multipleDelete.length === 0) {
-          return
-        }
-        this.$confirm('确定删除此店铺?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$axios({
-            method: "DELETE",
-            url: `${this.$baseURL}/v1/backstage/users/${this.multipleDelete[0]}`,
-            headers: {
-              'X-Access-Token': this.token,
-            }
-          }).then((res) => {
-            this.page=1;
-            this.getUserList();
-          }).catch((err) => {
-          })
-        }).catch(() => {
-          console.log('已取消删除')
-        });
-      },
-      //获取选中复选框数据
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
+
+
     }
   }
 </script>
@@ -388,6 +402,16 @@
   .el-range-editor.is-active, .el-range-editor.is-active:hover{
     border-color #dfe6f7
   }
-
+  .addShop{
+    .el-select-dropdown{
+      min-width: 380px !important;
+    }
+    .el-select .el-input.is-focus .el-input__inner{
+      border-color: #dfe6f7
+    }
+    .el-select .el-input__inner:focus {
+      border-color: #dfe6f7;
+    }
+  }
 
 </style>

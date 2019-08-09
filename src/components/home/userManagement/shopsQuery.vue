@@ -27,7 +27,7 @@
           <div class="table-title">
             <div class="shop-num">
               <h4>店铺总数</h4>
-              <p>80</p>
+              <p>{{totalUser}}</p>
             </div>
             <router-link class="add-shop" to="/home/userManagement/addShop">新增店铺</router-link>
           </div>
@@ -40,25 +40,22 @@
               </el-table-column>
               <el-table-column label="钱包地址" align="center" min-width="130" sortable='custom'>
                 <template slot-scope="scope">
-<!--
-                  <span>{{ scope.row.wallet_addr.substr(0,10) + "........" + scope.row.wallet_addr.substr(scope.row.wallet_addr.length-10,scope.row.wallet_addr.length)}}</span>
--->
                   <span>{{ scope.row.wallet_addr }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="店铺名称" align="center" min-width="130" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.shopName }}</span>
+                  <span>{{ scope.row.name }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="注册时间" align="center" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.time }}</span>
+                  <span>{{ scope.row.registed_time }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="地址" align="center"  min-width="160"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.location }}</span>
+                  <span>{{ scope.row.addr }}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -91,7 +88,7 @@
     components: {},
     data() {
       return {
-        totalUser: 100,
+        totalUser: 0,
         count_user: "",
         count_with_address: "",
         count_with_idcard: "",
@@ -99,68 +96,7 @@
         totalYJF: "",
         totalYDD: "",
         totalGGD: "",
-        userList: [
-          {
-            "address":"0x319f6b90********240x314C19",
-            "shopName": "王宏洗车店维修保养",
-            "time": "2019-06-27 17:25:25",
-            "location": "北京市朝阳区八里庄西里100号远洋国际中心A座6273"
-          },
-          {
-            "address":"0x75f0C181********4C1x314317",
-            "shopName": "北京朝阳燕鑫兆元洗车店（北京朝阳0-1分店）",
-            "time": "2019-05-22 10:11:20",
-            "location": "北京市朝阳区太阳共镇下家园0-3院"
-          },
-          {
-            "address":"0x95f8637c********5f9p4f9312",
-            "shopName": "昌平奔驰4S店分院",
-            "time": "2018-05-22 13:01:50",
-            "location": "北京市通州区安顺路257号"
-          },
-          {
-            "address":"0x79f21321********5f0C4314C26",
-            "shopName": "北京市德安汽车修理厂",
-            "time": "2019-09-27 16:16:28",
-            "location": "北京市安德里北街25号"
-          },
-          {
-            "address":"0x9ht51p81********cf0942gwD15",
-            "shopName": "北京鹏程汽修",
-            "time": "2018-04-16 10:28:05",
-            "location": "北京市通州区京榆旧路四海公寓附近"
-          },
-          {
-            "address":"0x2h8j7ct4********67d6c8gk7fp",
-            "shopName": "万达汽车修理有限公司(万达洗车)",
-            "time": "2019-07-03 06:54:17",
-            "location": "城南路22号(东寺渠大桥南50米路东)"
-          },
-          {
-            "address":"0x9p4fw0C1********x314429f6b9",
-            "shopName": "有壹手快修(京密路店)",
-            "time": "2018-10-22 11:32:12",
-            "location": "朝阳区来广营东路甲2号(近平治汽车服务有限公司)"
-          },
-          {
-            "address":"0x976ff0wj********1q0df224wx0",
-            "shopName": "月福洗车",
-            "time": "2019-12-05 14:45:09",
-            "location": "北京市通州区九棵树东路25号"
-          },
-          {
-            "address":"0x4f938gk7f********c9f212fgC24",
-            "shopName": "汽车维修养护洗车",
-            "time": "2019-09-15 08:18:55",
-            "location": "北京市玉带河西街171号附近"
-          },
-          {
-            "address":"0df22Wjp86********gB79g4G6h73",
-            "shopName": "宝马4s店",
-            "time": "2018-02-16 17:16:17",
-            "location": "北京市丰台区西罗园街道西罗园南里44号"
-          }
-        ],
+        userList: [],
         //phone: "",
         //name: "",
         store_name: "",
@@ -197,8 +133,12 @@
         if(this.time===null){
           this.time=["",""]
         } else {
-          this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
-          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();
+     /*     this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
+          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString(); */
+          if (this.time[0] && this.time[1]){
+            this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd");
+            this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd");
+          }
         }
       }
     },
@@ -222,21 +162,26 @@
         }).then(res => {
 
           console.log(res.data)
-          //this.totalUser = res.data.count;
-          this.count_user = res.data.count;
+          this.totalUser = Number(res.data.data.total);
+
+         /* this.count_user = res.data.count;
           this.count_with_address = res.data.count_with_address;
           this.count_with_idcard = res.data.count_with_idcard;
           this.count_with_vehicle = res.data.count_with_vehicle;
           this.totalYJF = res.data.TSD;
           this.totalYDD = res.data.YDD;
-          this.totalGGD = res.data.ADE;
+          this.totalGGD = res.data.ADE;*/
           let that = this;
-          res.data.users.forEach(function (item) {
-            if (item.created_at) {
-              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
+          res.data.data.stores.forEach(function (item) {
+            if (item.registed_time) {
+              item.registed_time = that.$utils.formatDate(new Date(item.registed_time), "yyyy-MM-dd hh:mm:ss");
+            }
+            if (item.wallet_addr){
+              item.wallet_addr = item.wallet_addr.substr(0,10) + "........" + item.wallet_addr.substr(item.wallet_addr.length-10,item.wallet_addr.length)
+
             }
           });
-          //this.userList = res.data.users;
+          this.userList = res.data.data.stores;
         }).catch(error => {
           console.log(error)
         })

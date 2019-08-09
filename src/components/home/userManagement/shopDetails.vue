@@ -13,41 +13,41 @@
             <tbody>
             <tr>
               <td class="table-title">店铺名称：</td>
-              <td>燕鑫兆元洗车店</td>
+              <td>{{userTable.name}}</td>
               <td class="table-title">店铺注册日期：</td>
-              <td>2019-05-22 10:11:20</td>
+              <td>{{userTable.registed_data}}</td>
             </tr>
             <tr>
               <td class="table-title">店铺联系方式：</td>
-              <td>010-34467242；010-78476331；</td>
+              <td>{{userTable.contact}}</td>
               <td class="table-title">店铺类型：</td>
-              <td>4s店</td>
+              <td>{{userTable.type}}</td>
             </tr>
             <tr>
               <td class="table-title">店铺地址：</td>
-              <td>北京市朝阳区八里庄西里100号</td>
+              <td style="line-height: 22px">{{userTable.addr}}</td>
               <td class="table-title">经纬度：</td>
-              <td>116°28′E,39°54′N</td>
+              <td>{{userTable.location}}</td>
             </tr>
             <tr>
               <td class="table-title">精修车型：</td>
-              <td>奥迪，上海通用雪佛兰，一汽大众，上海大众</td>
+              <td>{{userTable.serve_cars}}</td>
               <td class="table-title">服务范围：</td>
-              <td>专业维修、快速保养、电脑检测、轮胎大全、代办验车</td>
+              <td>{{userTable.serve_range}}</td>
             </tr>
             <tr>
               <td class="table-title">营业时间：</td>
-              <td>08：00 ~ 18：00 工作日</td>
+              <td>{{userTable.serve_time}}</td>
               <td class="table-title">钱包地址：</td>
-              <td>0x79f2132138793741264749532549870x79f213213879374126474953254987</td>
+              <td>{{userTable.wallet_addr}}</td>
             </tr>
             <tr>
               <td class="table-title" colspan="1">签名：</td>
-              <td colspan="3">为您的爱车提供贴心关爱，保姆式一条龙服务。</td>
+              <td colspan="3">{{userTable.sign}}</td>
             </tr>
             <tr>
               <td class="table-title" colspan="1">商家介绍：</td>
-              <td colspan="3">深耕汽车服务14年，全城14家门店，创建于2001年，是北京规模一类资质汽车维修企业之一。为您的爱车提供贴心关爱，保姆式一条龙服务。</td>
+              <td colspan="3">{{userTable.introduce}}</td>
             </tr>
             </tbody>
           </table>
@@ -59,7 +59,7 @@
             <div class="num-box">
               <div class="yuan-num">
                 <h4>元积分</h4>
-                <p>9000</p>
+                <p>{{balance}}</p>
               </div>
            <!--   <div class="taibao-num">
                 <h4>太保积分</h4>
@@ -68,7 +68,7 @@
             </div>
           </div>
           <div class="amount-right">
-            <img src="@/common/images/header.png" alt="">
+            <img src="@/common/images/golo_qrcode.png" alt="">
             <p>关注商户二维码可实时获得每笔收款信息</p>
           </div>
         </div>
@@ -76,16 +76,12 @@
       <div class="table-box">
         <div class="content-table">
           <div class="table-title">
-            <h3>账户金额</h3>
+            <h3>交易流水</h3>
             <br>
-            <ul>
-              <li :class="{ 'li-active': tabStatus}" @click="tabChange(tabStatus)">元积分</li>
-              <li :class="{ 'li-active': !tabStatus}" @click="tabChange(tabStatus)">太保积分</li>
-            </ul>
             <div class="search-box">
               <div class="total-num">
                 <label>当前总额：</label>
-                <p>78823.00</p>
+                <p>{{totalAmount}}</p>
               </div>
               <div class="search-right">
                 <label>创建时间：</label>
@@ -98,7 +94,7 @@
             </div>
           </div>
           <div class="table-details">
-            <el-table :data="userList" style="width: 100%" ref="multipleTable" tooltip-effect="dark" @selection-change="handleSelectionChange"
+            <el-table :data="flowList" style="width: 100%" ref="multipleTable" tooltip-effect="dark"
                        @sort-change='sortChange'>
               <el-table-column label="手机号码" align="center" min-width="110" sortable='custom'>
                 <template slot-scope="scope">
@@ -107,22 +103,22 @@
               </el-table-column>
               <el-table-column label="创建时间" align="center" min-width="150"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.time }}</span>
+                  <span>{{ scope.row.create_time }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="消费内容" align="center" min-width="130" sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.pakgName }}</span>
+                  <span>{{ scope.row.content }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="金额" align="center"  min-width="100"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.amount }}</span>
+                  <span>{{ scope.row.consume }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="备注" align="center"  min-width="100"  sortable='custom'>
                 <template slot-scope="scope">
-                  <span>{{ scope.row.notice }}</span>
+                  <span>{{ scope.row.remark }}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -152,91 +148,14 @@
     components: {},
     data() {
       return {
-        totalUser: 100,
-        count_user: "",
-        count_with_address: "",
-        count_with_idcard: "",
-        count_with_vehicle: "",
-        totalYJF: "",
-        totalYDD: "",
-        totalGGD: "",
-        userList: [
-          {
-            "phone": "13518654825",
-            "time": "2019-12-05 14:45:09",
-            "pakgName": "标准洗车1次",
-            "amount":"+200",
-            "notice": "洗车"
-          },
-          {
-            "phone": "18601522684",
-            "time": "2019-05-22 10:11:20",
-            "pakgName": "发动机清洗1次",
-            "amount":"+460",
-            "notice": "发动机清洗"
-          },
-          {
-            "phone": "18636543845",
-            "time": "2018-05-22 13:01:50",
-            "pakgName": "更换空气芯、空调芯2次",
-            "amount":"+310",
-            "notice": "空气芯、空调芯"
-          },
-          {
-            "phone": "13512245686",
-            "time": "2019-06-27 17:25:25",
-            "pakgName": "更换机油1次",
-            "amount":"+160",
-            "notice": "机油"
-          },
-          {
-            "phone": "13625858366",
-            "time": "2019-09-27 16:16:28",
-            "pakgName": "刹车片更换4次",
-            "amount":"+700",
-            "notice": "刹车片"
-          },
-          {
-            "phone": "18634219987",
-            "time": "2018-02-16 17:16:17",
-            "pakgName": "四轮定位、刹车系统保养1次",
-            "amount":"+1300",
-            "notice": "四轮定位"
-          },
-          {
-            "phone": "15586254168",
-            "time": "2018-04-16 10:28:05",
-            "pakgName": "油门踏板调教1次",
-            "amount":"+140",
-            "notice": "油门踏板"
-          },
-          {
-            "phone": "18625648552",
-            "time": "2018-10-22 11:32:12",
-            "pakgName": "更换火花塞1次",
-            "amount":"+80",
-            "notice": "火花塞"
-          },
-          {
-            "phone": "18682619302",
-            "time": "2019-07-03 06:54:17",
-            "pakgName": "更换防冻液和刹车油2次",
-            "amount":"+360",
-            "notice": "防冻液"
-          },
-          {
-            "phone": "13536828269",
-            "time": "2019-09-15 08:18:55",
-            "pakgName": "更换机油滤清器1次",
-            "amount":"+210",
-            "notice": "机油滤清器"
-          },],
+        totalUser: 0,
+        totalAmount: 0,
+
+        flowList: [],
         phone: "",
         name: "",
         idcard: "",
-        multipleSelection: [],
-        //multipleDelete: [],
-        loading: false,
+
         currentPage: 1,
         //total: 10,
         page: 1,
@@ -249,7 +168,12 @@
         appname:"",
         direction:"",
         sort:"",
-        tabStatus: true
+
+        userTable:{}, //用户信息
+        balance: 0,//账户金额
+        token: "",
+        user_id: "",
+        clickInfo: ""
       }
     },
     created() {
@@ -257,60 +181,66 @@
     beforeMount() {
     },
     mounted() {
-      this.token = JSON.parse(sessionStorage.getItem("myLogin")).data.token;
-      this.getUserList()
+      if (sessionStorage.getItem("userInfo")){
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+        this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
+      }
+      if (sessionStorage.getItem("clickInfo")){
+        this.clickInfo = JSON.parse(sessionStorage.getItem("clickInfo"))
+      }
+      this.getUserList();
+      this.getFlowList()
     },
     watch: {
       time: function () {
         if(this.time===null){
           this.time=["",""]
         } else {
-          this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
-          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();
+          if (this.time[0] && this.time[1]){
+            this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
+            this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
+          }
         }
       }
     },
     computed: {
-      //筛查出选中的数据的user_id组成的数组
-      multipleDelete:function () {
-        return this.$_.map(this.multipleSelection, function (item) {
-          return item.id
-        });
-      }
     },
     methods: {
-      tabChange(){
-        this.tabStatus = !this.tabStatus
-      },
       //获取用户列表
       getUserList() {
-        //手机号格式化
-        let initPhone = "";
-        if(this.phone){
-          initPhone = "+86" + this.phone
-        }
         this.$axios({
           method: "GET",
-          url: `${this.$baseURL}/v1/backstage/users?phone=${initPhone}&name=${this.name}&email=${this.email}&idcard=${this.idcard}&address=${this.address}&platform=${this.platform}&appname=${this.appname}&created_since=${this.time[0]}&created_to=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/stores/${this.clickInfo.id}?user_id=${this.user_id}`,
           headers: {
             'X-Access-Token': this.token,
           }
         }).then(res => {
-          //this.totalUser = res.data.count;
-          this.count_user = res.data.count;
-          this.count_with_address = res.data.count_with_address;
-          this.count_with_idcard = res.data.count_with_idcard;
-          this.count_with_vehicle = res.data.count_with_vehicle;
-          this.totalYJF = res.data.TSD;
-          this.totalYDD = res.data.YDD;
-          this.totalGGD = res.data.ADE;
+          this.balance = res.data.data.balance;
+          this.userTable = res.data.data.store
+        }).catch(error => {
+          console.log(error)
+        })
+      },
+      //获取交易流水
+      getFlowList() {
+        this.$axios({
+          method: "GET",
+          url: `${this.$baseURL}/v1/rrpoints-saas/web/stores/${this.clickInfo.id}/transaction?user_id=${this.user_id}&start_time=${this.time[0]}&end_time=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
+          headers: {
+            'X-Access-Token': this.token,
+          }
+        }).then(res => {
+          this.totalUser = Number(res.data.data.pages);
+          this.totalAmount = res.data.data.total;
           let that = this;
-          res.data.users.forEach(function (item) {
-            if (item.created_at) {
-              item.created_at = that.$utils.formatDate(new Date(item.created_at), "yyyy-MM-dd hh:mm:ss");
-            }
-          });
-          //this.userList = res.data.users;
+          if (res.data.data.transactions.length > 0){
+            res.data.data.transactions.forEach(function (item) {
+              if (item.create_time) {
+                item.create_time = that.$utils.formatDate(new Date(item.create_time), "yyyy-MM-dd hh:mm:ss");
+              }
+            })
+          }
+          this.flowList = res.data.data.transactions
         }).catch(error => {
           console.log(error)
         })
@@ -342,63 +272,29 @@
         }
         if (column.order == "descending"){
           this.direction = "desc";
-          this.getUserList()
+          this.getFlowList()
         } else if (column.order == "ascending"){
           this.direction = "asc";
-          this.getUserList()
+          this.getFlowList()
         }
       },
       //点击搜索按钮搜索用户列表
       btnSearchUserList() {
         this.page = 1;//按钮搜索时初始化page
-        this.getUserList()
-      },
-      //获取所点击行的信息
-      getClickInfo(row){
-        sessionStorage.setItem("clickInfo", JSON.stringify(row));
-        //this.$router.push("/home/userManagement/shopDetails");
-        window.open("/home/userManagement/shopDetails",'_blank');
+        this.getFlowList()
       },
       //更改每页显示条数
       handleSizeChange(val) {
         this.limit = val;
-        this.getUserList()
+        this.getFlowList()
       },
       //切换分页
       handleCurrentChange(val) {
         this.page = val;
-        this.getUserList()
+        this.getFlowList()
       },
-      //删除按钮删除方法
-      handleDeletes() {
-        if (this.multipleDelete.length === 0) {
-          return
-        }
-        this.$confirm('确定删除此店铺?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.$axios({
-            method: "DELETE",
-            url: `${this.$baseURL}/v1/backstage/users/${this.multipleDelete[0]}`,
-            headers: {
-              'X-Access-Token': this.token,
-            }
-          }).then((res) => {
-            this.page=1;
-            this.getUserList();
-          }).catch((err) => {
-          })
-        }).catch(() => {
-          console.log('已取消删除')
-        });
-      },
-      //获取选中复选框数据
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
+
+
     }
   }
 </script>
@@ -424,7 +320,7 @@
         }
       }
       .user-info{
-        height: 390px;
+        height: 400px;
         background-color: #ffffff;
         margin-top 15px
         padding:20px
@@ -503,6 +399,8 @@
         }
         .amount-right{
           img{
+            width: 80px
+            height: 80px
             margin: 10px;
             margin-left: 200px;
           }
