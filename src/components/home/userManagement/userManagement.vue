@@ -27,6 +27,12 @@
             </router-link>
           </el-menu-item>
           <el-menu-item index="accountRanking">
+            <router-link to="/home/userManagement/paymentVerification">
+              <i class="icon5"></i>
+              商户收款验证
+            </router-link>
+          </el-menu-item>
+          <el-menu-item index="accountRanking">
             <a href="javascript:void(0);" class="{'is-checked',isChecked}" @click="logout()">
               <i class="icon4"></i>
               退出账号
@@ -140,6 +146,10 @@
       }
       .icon4{
         background url("../../../common/images/tuichu_mr.png") no-repeat center
+        background-size 100% 100%
+      }
+      .icon5{
+        background url("../../../common/images/shoukuan_icon.png") no-repeat center
         background-size 100% 100%
       }
     }

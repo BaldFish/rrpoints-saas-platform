@@ -10,6 +10,7 @@ import myShopDetails from '@/components/home/userManagement/shopDetails'
 import myServiceQuery from '@/components/home/userManagement/serviceQuery'
 import myAddShop from '@/components/home/userManagement/addShop'
 import myChangePassword from '@/components/home/userManagement/changePassword'
+import myPaymentVerification from '@/components/home/userManagement/paymentVerification'
 
 Vue.use(Router);
 
@@ -75,6 +76,11 @@ export default new Router({
               path: '/home/userManagement/changePassword',
               name: 'changePassword',
               component: myChangePassword,
+            },
+            {
+              path: '/home/userManagement/paymentVerification',
+              name: 'paymentVerification',
+              component: myPaymentVerification,
             },
           ]
         },
