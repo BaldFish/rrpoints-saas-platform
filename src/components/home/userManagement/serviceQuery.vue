@@ -90,7 +90,7 @@
             </el-table>
             <div class="table-footer">
               <div style="margin-top: 20px;margin-bottom: 20px;">
-                <el-button type="primary" @click="handleDeletes" icon="el-icon-delete" class="delete-btn">删除店铺</el-button>
+                <el-button type="primary" @click="handleDeletes" icon="el-icon-delete" class="delete-btn">删除服务包</el-button>
               </div>
               <div class="block" style="text-align:center">
                 <el-pagination
@@ -224,12 +224,12 @@
         if(this.time===null){
           this.time=["",""]
         } else {
-          this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
-          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();
-          /*if (this.time[0] && this.time[1]){
-        this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
-        this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
-      }*/
+         /* this.time[0] = new Date(this.time[0]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[0]).toUTCString();
+          this.time[1] = new Date(this.time[1]).toUTCString() === "Invalid Date" ? "" : new Date(this.time[1]).toUTCString();*/
+          if (this.time[0] && this.time[1]){
+            this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd");
+            this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd");
+          }
         }
       }
     },
@@ -357,7 +357,7 @@
           state: '',
         }
       },
-      //查询店铺列表
+      //查询服务包列表
       getShopsList() {
         this.$axios({
           method: "GET",
@@ -373,10 +373,6 @@
       },
       //获取服务包列表
       getUserList() {
-        /*if (this.time[0] && this.time[1]){
-          this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
-          this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
-        }*/
         this.$axios({
           method: "GET",
           url: `${this.$baseURL}/v1/rrpoints-saas/web/services?user_id=${this.user_id}&service_name=${this.service_name}&store_name=${this.store_name}&start_time=${this.time[0]}&end_time=${this.time[1]}&sort=${this.sort}&direction=${this.direction}&page=${this.page-1}&limit=${this.limit}`,
@@ -444,7 +440,7 @@
         if (this.multipleDelete.length === 0) {
           return
         }
-        this.$confirm('确定删除此店铺?', '提示', {
+        this.$confirm('确定删除此服务包?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',

@@ -89,13 +89,6 @@
     data() {
       return {
         totalUser: 0,
-        count_user: "",
-        count_with_address: "",
-        count_with_idcard: "",
-        count_with_vehicle: "",
-        totalYJF: "",
-        totalYDD: "",
-        totalGGD: "",
         userList: [],
         //phone: "",
         //name: "",
@@ -160,17 +153,7 @@
             'X-Access-Token': this.token,
           }
         }).then(res => {
-
-          console.log(res.data)
           this.totalUser = Number(res.data.data.total);
-
-         /* this.count_user = res.data.count;
-          this.count_with_address = res.data.count_with_address;
-          this.count_with_idcard = res.data.count_with_idcard;
-          this.count_with_vehicle = res.data.count_with_vehicle;
-          this.totalYJF = res.data.TSD;
-          this.totalYDD = res.data.YDD;
-          this.totalGGD = res.data.ADE;*/
           let that = this;
           res.data.data.stores.forEach(function (item) {
             if (item.registed_time) {
@@ -178,7 +161,6 @@
             }
             if (item.wallet_addr){
               item.wallet_addr = item.wallet_addr.substr(0,10) + "........" + item.wallet_addr.substr(item.wallet_addr.length-10,item.wallet_addr.length)
-
             }
           });
           this.userList = res.data.data.stores;
@@ -253,7 +235,7 @@
         }).then(() => {
           this.$axios({
             method: "DELETE",
-            url: `${this.$baseURL}/v1/backstage/users/${this.multipleDelete[0]}`,
+            url: `${this.$baseURL}/v1/rrpoints-saas/web/stores/${this.multipleDelete[0]}?user_id=${this.user_id}`,
             headers: {
               'X-Access-Token': this.token,
             }

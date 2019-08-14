@@ -197,8 +197,8 @@
           this.time=["",""]
         } else {
           if (this.time[0] && this.time[1]){
-            this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd HH:mm:ss");
-            this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd HH:mm:ss");
+            this.time[0] = this.$utils.formatDate(this.time[0],"yyyy-MM-dd");
+            this.time[1] = this.$utils.formatDate(this.time[1],"yyyy-MM-dd");
           }
         }
       }
