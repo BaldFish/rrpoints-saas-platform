@@ -71,6 +71,12 @@
               'X-Access-Token': this.token,
             }
           }).then(res => {
+            this.errorMessage = "开启成功";
+            this.errorTip = true;
+            this.code="";
+            window.setTimeout(() => {
+              this.errorTip = false;
+            }, 2000);
           }).catch(error => {
             this.errorMessage = error.response.data.message;
             this.errorTip = true;
