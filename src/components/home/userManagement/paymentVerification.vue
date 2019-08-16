@@ -9,13 +9,16 @@
         <div class="code_wrap">
           <img src="@/common/images/erweima.png" alt="">
           <div class="tips_wrap">
-            <h3>开启手机身份验证</h3>
+            <h3>开启商户收款验证</h3>
             <p class="up">使用微信扫描左侧二维码并关注我们的微信公众号，您将会收到验证码</p>
             <p class="down">输入您收到的微信消息中的验证码：</p>
-            <input type="text"><span>验证并开启</span>
+            <input type="text" v-model="code"><span @click="verification">验证并开启</span>
           </div>
         </div>
       </div>
+    </div>
+    <div class="errorTip_wrap" v-if="errorTip">
+      <div class="errorTip">{{errorMessage}}</div>
     </div>
   </div>
 </template>
@@ -25,17 +28,65 @@
     name: "paymentVerification",
     components: {},
     data() {
-      return {}
+      return {
+        storeId:"",
+        token:"",
+        userId:"",
+        code:"",
+        errorTip: false,
+        errorMessage: "",
+      }
     },
     created() {
+      if (sessionStorage.getItem("userInfo")){
+        this.userId = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
+        this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
+      } else {
+        this.$router.push("/login")
+      }
     },
     beforeMount() {
     },
     mounted() {
     },
-    watch: {},
+    watch: {
+      code: function (val) {
+        if (this.code && !/^\d{1,6}$/.test(val)) {
+          this.code = this.code.slice(0, this.code.length - 1)
+        }
+      }
+    },
     computed: {},
-    methods: {},
+    methods: {
+      verification(){
+        if(this.code&&this.code.length===6){
+          this.$axios({
+            method: 'post',
+            url: `${this.$baseURL}/v1/rrpoints-saas/web/bind`,
+            data: this.$querystring.stringify({
+              user_id: this.userId,
+              code: this.code
+            }),
+            headers: {
+              'X-Access-Token': this.token,
+            }
+          }).then(res => {
+          }).catch(error => {
+            this.errorMessage = error.response.data.message;
+            this.errorTip = true;
+            window.setTimeout(() => {
+              this.errorTip = false;
+            }, 2000);
+          })
+        }else{
+          this.errorMessage = "请输入正确的验证码";
+          this.errorTip = true;
+          window.setTimeout(() => {
+            this.errorTip = false;
+          }, 2000);
+        }
+      }
+    },
   }
 </script>
 
@@ -130,6 +181,27 @@
             }
           }
         }
+      }
+    }
+    .errorTip_wrap {
+      width 100%
+      height 100%
+      position fixed
+      left 0
+      top 0
+      display flex
+      align-items center
+      justify-content center
+  
+      .errorTip {
+        line-height 1.6
+        max-width 300px;
+        padding 10px 15px
+        background-color #000000
+        opacity 0.7
+        font-size 16px; /*px*/
+        color #ffffff
+        border-radius 15px
       }
     }
   }
