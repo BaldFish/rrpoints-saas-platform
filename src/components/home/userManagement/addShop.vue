@@ -67,18 +67,48 @@
               <img width="100%" :src="dialogImageUrl" alt="">
             </el-dialog>
           </div>
-
-
           <div class="map-box">
-            <template>
-              <baidu-map class="map" :center="center" :zoom="zoom">
-                <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-                <bm-marker :position="{lng: 116.404, lat: 39.915}" :dragging="true">
-                  <bm-context-menu>
-                    <bm-context-menu-item :callback="getPosition" text="获取坐标"></bm-context-menu-item>
-                  </bm-context-menu>
-                </bm-marker>
-              </baidu-map>
+            <template>              　　　　　
+　　　　　　　　<div class="baiduMap">
+　　　　　　　　　　<i-form :model="centerStr" :label-width="120">
+　　　　　　　　　　　　<Form-item label="经度：">
+　　　　　　　　　　　　　　<i-input :value.sync="centerStr.lng" readonly></i-input>
+　　　　　　　　　　　　</Form-item>
+　　　　　　　　　　　　<Form-item label="纬度：">
+　　　　　　　　　　　　　　<i-input :value.sync="centerStr.lat" readonly></i-input>
+　　　　　　　　　　　　</Form-item>              　　　　　　
+　　　　　　　　　　</i-form>
+　　　　　　　　　　<baidu-map
+　　　　　　　　　　　　class="bm-view"
+　　　　　　　　　　　　ak="APkv65l0uG6nxkiDW7Iq6S6GuglXpg2q"
+　　　　　　　　　　　　:center="LocationCity"
+　　　　　　　　　　　　:zoom="15"
+　　　　　　　　　　　　:scroll-wheel-zoom="true"
+　　　　　　　　　　　　@click="getClickInfo"
+　　　　　　　　　　　　@moving="syncCenterAndZoom"
+　　　　　　　　　　　　@moveend="syncCenterAndZoom"
+　　　　　　　　　　　　@zoomend="syncCenterAndZoom">
+　　　　　　　　　　　　　　<bm-view style="width: 100%; height:500px;"></bm-view>
+　　　　　　　　　　　　　　<bm-marker
+　　　　　　　　　　　　　　　　:position="{ lng: centerStr.lng, lat: centerStr.lat }"
+　　　　　　　　　　　　　　　　:dragging="true"
+　　　　　　　　　　　　　　　　animation="BMAP_ANIMATION_BOUNCE">
+　　　　　　　　　　　　　　</bm-marker>
+　　　　　　　　　　　　　　<bm-control>
+　　　　　　　　　　　　　　　　<bm-auto-complete v-model="keyword" :sugStyle="{ zIndex: 999999 }">
+　　　　　　　　　　　　　　　　　　<input
+　　　　　　　　　　　　　　　　　　　　type="text"
+　　　　　　　　　　　　　　　　　　　　placeholder="请输入搜索关键字"
+　　　　　　　　　　　　　　　　　　　　class="serachinput"/>
+　　　　　　　　　　　　　　　　</bm-auto-complete>
+　　　　　　　　　　　　　　</bm-control>
+　　　　　　　　　　　　　　<bm-local-search
+　　　　　　　　　　　　　　　:keyword="keyword"
+　　　　　　　　　　　　　　　:auto-viewport="true"
+　　　　　　　　　　　　　　　style="width:0px;height:0px;overflow: hidden;"
+　　　　　　　　　　　　　　></bm-local-search>
+　　　　　　　　　　</baidu-map>
+　　　　　　　　</div>              　　　
             </template>
           </div>
           <div class="search-btn" @click="addNewShop()">创建</div>
@@ -89,6 +119,8 @@
 </template>
 
 <script>
+  import {cityCode} from '@/common/js/city.js';
+
   export default {
     name: "addShop",
     components: {},
@@ -131,42 +163,60 @@
         serve_time: "",
         sign: "",
         introduce: "",
-        //上传数据
-        uploadUrl:`${this.$baseURL}/v1/rrpoints-saas/resources/upload`,
-        /*uploadHeaders:{'X-Access-Token': this.token},
-        uploadData:{
-          user_id: this.user_id,
-          img: "", // 图片数据的base64编码
-          ext: "", // 扩展名
-        },*/
-
-        img: "", // 图片数据的base64编码
-        ext: "", // 扩展名
-
+        region_code: "11", //北京市code
         dialogImageUrl: '',
         dialogVisible: false,
-
-        center: {
-          lng: 116.404,
-          lat: 39.915
+        //上传数据
+        uploadUrl:`${this.$baseURL}/v1/rrpoints-saas/resources/upload`,
+        img: "", // 图片数据的base64编码
+        ext: "", // 扩展名
+        filename: "", // 上传成功返回的文件名
+        icons: [], // 头像
+        //百度地图
+        showMapComponent: this.value,
+        keyword: "",
+        centerStr: {
+          lng: "",
+          lat: ""
         },
-        zoom: 15
+        LocationProvince:"正在定位所在省",    //给渲染层定义一个初始值
+        LocationCity:"北京市"     //给渲染层定义一个初始值
       }
     },
     created() {
     },
     beforeMount() {
     },
+    watch: {
+      value: function(currentValue) {
+        this.showMapComponent = currentValue;
+        if (currentValue) {
+          this.keyword = "";
+        }
+      }
+    },
     mounted() {
       if (sessionStorage.getItem("userInfo")){
         this.token = JSON.parse(sessionStorage.getItem("userInfo")).token;
         this.user_id = JSON.parse(sessionStorage.getItem("userInfo")).user_id;
       }
+      //触发获取城市方法
+      this.city()
     },
     methods: {
+      //删除图片
       handleRemove(file, fileList) {
-        console.log(file,"handleRemove");
-        console.log(fileList,"handleRemove");
+        this.filename = this.getCaption(file.response.img_url);
+        this.$axios({
+          method: 'DELETE',
+          url: `${this.$baseURL}/v1/rrpoints-saas/resources/${this.filename}`,
+          headers: {
+            'X-Access-Token': this.token,
+          }
+        }).then(res => {
+          this.icons.pop()
+        }).catch(error => {
+        })
       },
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
@@ -178,84 +228,71 @@
         obj=obj.substring(index+1,obj.length);
         return obj;
       },
-      //图片转Base64
-      getBase64Image (url,callback) {
-        /*var canvas = document.createElement("canvas"); //创建canvas DOM元素，并设置其宽高和图片一样
+      //图片转化为base64
+      getBase64Image(img) {
+        var canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
         var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, img.width, img.height); //使用画布画图
-        var dataURL = canvas.toDataURL("image/" + ext); //返回的是一串Base64编码的URL并指定格式
-        canvas = null; //释放
-        return dataURL;*/
-
-        var canvas = document.createElement('canvas'),
-          ctx = canvas.getContext('2d'),
-          img = new Image;
-        img.crossOrigin = 'Anonymous';
-        img.onload = function(){
-          canvas.height = img.height;
-          canvas.width = img.width;
-          ctx.drawImage(img,0,0);
-          var dataURL = canvas.toDataURL('image/png');
-          callback(dataURL);
-          canvas = null;
-        };
-        img.src = url;
-      },
-      getBase64(imgUrl) {
-        window.URL = window.URL || window.webkitURL;
-        var xhr = new XMLHttpRequest();
-        xhr.open("get", imgUrl, true);
-        //var base64Address = "";
-        // 至关重要
-        xhr.responseType = "blob";
-        xhr.onload = function () {
-          if (this.status == 200) {
-            //得到一个blob对象
-            var blob = this.response;
-            // 至关重要
-            let oFileReader = new FileReader();
-            oFileReader.onloadend = function (e) {
-              let base64 = e.target.result;
-              //base64Address = e.target.result;
-              console.log("base64>>", base64)
-
-            };
-            oFileReader.readAsDataURL(blob);
-
-           // return window.URL.createObjectURL(blob)
-
-            console.log(window.URL.createObjectURL(blob),"6666")
-          }
-        };
-        xhr.send();
-        //console.log("666>>", base64Address)
-
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var ext = img.src.substring(img.src.lastIndexOf(".")+1).toLowerCase();
+        var dataURL = canvas.toDataURL("image/"+ext);
+        return dataURL;
       },
       //文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
       handleImgChange(file, fileList){
-        //console.log(file);
         this.ext = this.getCaption(file.raw.type);
-        this.img = this.getBase64Image(file.url.substring(5))
-        console.log(  this.ext);
-        console.log(  this.img);
-
-
-
+        // 图片转Bsae64
+        var image = new Image();
+        image.src = file.url;
+        image.onload = (function(){
+          this.img = this.getBase64Image(image).substring(22);
+        }).bind(this)
       },
       //图片上传成功钩子
       handleAvatarSuccess(res, file, fileList){
-
-        console.log(res,"res")
-        console.log(file,"file")
-        console.log(fileList,"fileList")
+        this.icons.push(res.img_url)
       },
-
-      getPosition (e) {
-        alert(`${e.point.lng} / ${e.point.lat}`)
+      //百度地图
+      getClickInfo(e) {
+        this.centerStr.lng = e.point.lng;
+        this.centerStr.lat = e.point.lat;
       },
-
+      syncCenterAndZoom(e) {
+        const { lng, lat } = e.target.getCenter();
+        this.centerStr.lng = lng;
+        this.centerStr.lat = lat;
+        this.zoom = e.target.getZoom();
+      },
+      //定义获取城市方法
+      city(){
+        const geolocation = new BMap.Geolocation();
+        var _this = this;
+        geolocation.getCurrentPosition(function getinfo(position){
+          let city = position.address.city;             //获取城市信息
+          let province = position.address.province;     //获取省份信息
+          _this.LocationProvince = province;
+          _this.LocationCity = city;
+          _this.getCityCode(_this.LocationCity)
+        }, function(e) {
+          _this.LocationCity = "定位失败"
+        }, {provider: 'baidu'});
+      },
+      //获取城市地区编码
+      getCityCode(cityName){
+        let that = this;
+        cityCode.forEach(function (item1) {
+          if (item1.name === cityName){
+            that.region_code = item1.code
+          } else {
+            item1.children.forEach(function (item2) {
+              if (item2.name === cityName) {
+                that.region_code = item2.code
+              }
+            })
+          }
+        })
+      },
       //添加店铺
       addNewShop(){
         let data = {
@@ -269,12 +306,11 @@
           serve_time: this.serve_time,
           sign: this.sign,
           introduce: this.introduce,
-
-          longitude: this.longitude,
-          latitude: this.latitude,
-          region_code: this.region_code,
           icons: this.icons,
-
+          //百度地图
+          longitude: this.centerStr.lng,
+          latitude: this.centerStr.lat,
+          region_code: this.region_code,
         };
         this.$axios({
           method: 'post',
@@ -284,8 +320,6 @@
             'X-Access-Token': this.token,
           }
         }).then(res => {
-
-
           this.$router.push("/home/userManagement/shopsQuery")
         }).catch(error => {
         })
@@ -296,16 +330,49 @@
   }
 </script>
 
-<style>
-  /* The container of BaiduMap must be set width & height. */
-  .map {
-   /* width: 100%;
-    height: 300px;*/
-    width: 90%;
-    height: 340px;
-    margin-left: 5%;
- /*   margin: 0 auto;*/
+<style lang="stylus">
+  .baiduMap{
+    width: 100%
+    form{
+      display: flex;
+      flex-direction: row;
+      .ivu-form-item{
+        .ivu-form-item-label{
+          font-size 16px
+          padding-right 0
+        }
+        .ivu-form-item-content{
+          margin-left 124px !important
+          input{
+            height:40px
+            background-color: #f6f8fe;
+            border: solid 1px #dfe6f7;
+            border-radius: 4px;
+          }
+          .ivu-input:focus{
+            box-shadow none
+          }
+        }
+      }
+    }
+    .serachinput{
+      width:300px
+      box-sizing :border-box
+      padding:9px
+      border:1px solid #dddee1
+      line-height: 20px;
+      font-size: 16px;
+      height: 38px;
+      color: #333;
+      position: relative;
+      border-radius: 4px;
+      outline none
+      -webkit-box-shadow: #666 0 0 10px;
+      -moz-box-shadow: #666 0 0 10px;
+      box-shadow: #666 0 0 10px
+    }
   }
+
 </style>
 
 <style scoped lang="stylus">
@@ -413,5 +480,9 @@
       border-color: #dfe6f7;
     }
   }
-
+  .addShop{
+    .el-input {
+      margin-right: 0;
+    }
+  }
 </style>
