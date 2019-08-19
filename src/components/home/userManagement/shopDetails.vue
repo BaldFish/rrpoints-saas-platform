@@ -42,7 +42,7 @@
               <td>{{userTable.wallet_addr}}</td>
             </tr>
             <tr>
-              <td class="table-title" colspan="1">签名：</td>
+              <td class="table-title" colspan="1">标签：</td>
               <td colspan="3">{{userTable.sign}}</td>
             </tr>
             <tr>
@@ -68,8 +68,14 @@
             </div>
           </div>
           <div class="amount-right">
-            <img src="@/common/images/golo_qrcode.png" alt="">
-            <p>关注商户二维码可实时获得每笔收款信息</p>
+            <h3>关注商户二维码可实时获得每笔收款信息</h3>
+            <input type="button" @click="showImg(258,258)" value="258x258">
+            <input type="button" @click="showImg(344,344)" value="344x344">
+            <input type="button" @click="showImg(430,430)" value="430x430">
+            <input type="button" @click="showImg(860,860)" value="860x860">
+            <input type="button" @click="showImg(1280,1280)" value="1280x1280">
+            <!-- 创建一个div，并设置id为qrcode -->
+            <div id="qrcode" style="display: none"></div>
           </div>
         </div>
       </div>
@@ -138,11 +144,23 @@
           </div>
         </div>
       </div>
+
+      <el-dialog
+        title="图片预览"
+        :visible.sync="dialogVisible"
+        :width="dialogWidth">
+        <img :src="downLoadImg" alt="">
+        <span slot="footer" class="dialog-footer">
+          <a :href="downLoadImg" download>下载</a>
+        </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
+  import QRCode from 'qrcodejs2'  // 引入qrcode
+
   export default {
     name: "shopDetails",
     components: {},
@@ -173,7 +191,11 @@
         balance: 0,//账户金额
         token: "",
         user_id: "",
-        clickInfo: ""
+        clickInfo: "",
+
+        dialogWidth: "30%",
+        dialogVisible: false,
+        downLoadImg: ""
       }
     },
     created() {
@@ -324,7 +346,23 @@
         this.page = val;
         this.getFlowList()
       },
-
+      //预览图片
+      showImg(width,height){
+        this.dialogWidth = width + 100 + "px";
+        this.dialogVisible = true;
+        //生成二维码
+        document.getElementById("qrcode").innerHTML = "";
+        let qrcode = new QRCode('qrcode', {
+          width: width,
+          height: height,
+          text: this.userTable.wallet_addr + "&type=2", // 二维码地址
+          colorDark : "#000",
+          colorLight : "#fff",
+        });
+        setTimeout(()=> {
+          this.downLoadImg = document.getElementById("qrcode").getElementsByTagName('img')[0].getAttribute('src')
+        })
+      }
 
     }
   }
@@ -429,17 +467,21 @@
           }
         }
         .amount-right{
-          img{
-            width: 80px
-            height: 80px
-            margin: 10px;
-            margin-left: 200px;
-          }
-          p{
-            text-align center
-            font-size: 14px;
+          h3{
+            font-size: 18px;
             color: #333333;
-            margin-left: 120px;
+            margin: 20px 0 20px 20px;
+          }
+          input{
+            width: 120px;
+            height: 48px;
+            background-color: #386cff;
+            border-radius: 4px;
+            margin: 0 22px;
+            font-size: 18px;
+            color: #fefefe;
+            outline: none;
+            cursor: pointer;
           }
         }
       }
@@ -579,4 +621,26 @@
     }
   }
 
+
+  .shopDetails{
+    .el-dialog__body{
+      text-align center
+    }
+    .el-dialog__footer{
+      text-align center
+      a{
+        width: 120px;
+        height: 48px;
+        line-height 48px
+        display inline-block
+        background-color: #386cff;
+        border-radius: 4px;
+        margin: 0 22px;
+        font-size: 18px;
+        color: #fefefe;
+        outline: none;
+        cursor: pointer;
+      }
+    }
+  }
 </style>

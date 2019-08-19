@@ -38,8 +38,8 @@
           <br/>
           <label>营业时间：</label>
           <el-input v-model="serve_time" placeholder="请输入营业时间" clearable style="width: 380px"></el-input>
-          <label>签名：</label>
-          <el-input v-model="sign" placeholder="请输入签名" clearable style="width: 380px"></el-input>
+          <label>标签：</label>
+          <el-input v-model="sign" placeholder="请输入标签" clearable style="width: 380px"></el-input>
           <br/>
           <br/>
           <label>商家介绍：</label>
