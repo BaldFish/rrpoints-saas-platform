@@ -216,6 +216,37 @@
           }
         }).then(res => {
           this.balance = res.data.data.balance;
+          let shopTypes = [
+              {
+                id: 0,
+                name: "4S店、停车、加油、充电、洗车"
+              },
+              {
+                id: 1,
+                name: "4S店"
+              },
+              {
+                id: 2,
+                name: "停车"
+              },
+              {
+                id: 3,
+                name: "加油"
+              },
+              {
+                id: 4,
+                name: "充电"
+              },
+              {
+                id: 5,
+                name: "洗车"
+              }
+          ];
+          shopTypes.forEach(function (data) {
+            if (data.id === Number(res.data.data.store.type)){
+              res.data.data.store.type = data.name
+            }
+          });
           this.userTable = res.data.data.store
         }).catch(error => {
           console.log(error)
