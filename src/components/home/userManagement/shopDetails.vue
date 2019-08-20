@@ -68,7 +68,7 @@
             </div>
           </div>
           <div class="amount-right">
-            <h3>关注商户二维码可实时获得每笔收款信息</h3>
+            <h3>下载打印收款二维码可便于商户日常经营</h3>
             <input type="button" @click="showImg(258,258)" value="258x258">
             <input type="button" @click="showImg(344,344)" value="344x344">
             <input type="button" @click="showImg(430,430)" value="430x430">
@@ -482,6 +482,7 @@
             color: #fefefe;
             outline: none;
             cursor: pointer;
+            margin-right 18px
           }
         }
       }
