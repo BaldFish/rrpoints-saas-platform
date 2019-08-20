@@ -165,7 +165,9 @@
           });
           this.userList = res.data.data.stores;
         }).catch(error => {
-          console.log(error)
+          if(error.response.status === 401){
+            this.$router.push("/login")
+          }
         })
       },
       //排序

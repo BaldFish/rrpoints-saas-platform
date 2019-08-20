@@ -271,7 +271,9 @@
           });
           this.userTable = res.data.data.store
         }).catch(error => {
-          console.log(error)
+          if(error.response.status === 401){
+            this.$router.push("/login")
+          }
         })
       },
       //获取交易流水

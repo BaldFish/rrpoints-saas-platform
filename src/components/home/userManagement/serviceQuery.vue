@@ -357,7 +357,7 @@
           state: '',
         }
       },
-      //查询服务包列表
+      //查询服务包列表 select
       getShopsList() {
         this.$axios({
           method: "GET",
@@ -384,7 +384,9 @@
           this.totalPkgs = res.data.data.total;
           this.servicePkgList = res.data.data.services
         }).catch(error => {
-          console.log(error)
+          if(error.response.status === 401){
+            this.$router.push("/login")
+          }
         })
       },
       //排序
