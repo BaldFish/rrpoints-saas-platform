@@ -34,11 +34,17 @@
         </div>
       </div>
     </div>
-
+    <div class="info-footer">
+      <p>联系方式：罗女士 13581622836（同微信）</p>
+      <a href="javascript:void(0);" @click="downLoadFile">下载帮助手册</a>
+    </div>
   </div>
 </template>
 
 <script>
+  import { saveAs } from 'file-saver';
+  var FileSaver = require('file-saver');
+
   export default {
     name: "login",
     components: {},
@@ -90,7 +96,7 @@
           ],
 
         },
-        captcha_number: "",
+        captcha_number: require("../../common/images/code.png"), // 1.预设图片占位。火狐不显示 2.webpack要求require
         captcha_id: "",
         errorMessage: "",//错误提示信息
         errorTip: false,
@@ -101,15 +107,19 @@
     created() {
     },
     beforeMount() {
-      this.$nextTick(() => {
-        this.getCaptcha()
-      });
     },
     mounted() {
+      this.$nextTick(() => {
+         this.getCaptcha()
+      })
     },
     watch: {},
     computed: {},
     methods: {
+      //下载帮助手册
+      downLoadFile(){
+        FileSaver.saveAs("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/mannul.pdf", "帮助手册.pdf")
+      },
       //获取图片验证码
       getCaptcha() {
         this.$axios({
@@ -274,5 +284,28 @@
     }
 
 
+    .info-footer{
+      display flex
+      flex-direction row
+      align-items center
+      justify-content: flex-end;
+      margin-right 6%
+      p{
+        font-size:20px;
+        color:rgba(51,51,51,1);
+        margin-right 30px
+      }
+      a{
+        width:144px;
+        height:46px;
+        line-height 46px
+        font-size:20px;
+        text-align center
+        color:rgba(255,255,255,1);
+        background:rgba(48,106,246,1);
+        border-radius:10px;
+        display inline-block
+      }
+    }
   }
 </style>
