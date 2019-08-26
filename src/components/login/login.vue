@@ -35,7 +35,7 @@
       </div>
     </div>
     <div class="info-footer">
-      <p @click="downLoadFile()">联系方式：罗女士 13581622836（同微信）</p>
+      <p>联系方式：罗女士 13581622836（同微信）</p>
       <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
     </div>
   </div>
