@@ -357,7 +357,7 @@
         let qrcode = new QRCode('qrcode', {
           width: width,
           height: height,
-          text: this.userTable.wallet_addr + "&type=2", // 二维码地址
+          text: this.userTable.wallet_addr, // 二维码地址
           colorDark : "#000",
           colorLight : "#fff",
         });
