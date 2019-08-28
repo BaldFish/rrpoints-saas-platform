@@ -146,6 +146,7 @@
           let xhr = new XMLHttpRequest();
           xhr.open('get', url, true);
           xhr.setRequestHeader('Content-Type', `application/${type}`);
+          xhr.setRequestHeader('Access-Control-Allow-Origin', `*`);
           xhr.responseType = "blob";
           xhr.onload = function () {
             if (this.status == 200) {
