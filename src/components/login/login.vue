@@ -40,15 +40,11 @@
         <p>邮箱：zhangqing@cnlaunch.com</p>
       </div>
       <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
-      <a href="javascript:void(0);" @click="downLoadFile2()">https</a>
     </div>
   </div>
 </template>
 
 <script>
-  import { saveAs } from 'file-saver';
-  var FileSaver = require('file-saver');
-
   var fileDownload = require('downloadjs');
 
   export default {
@@ -124,36 +120,7 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-
-        /*this.$axios({
-          method: 'GET',
-          url: "http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf",
-        }).then(res => {
-          console.log(res)
-
-
-        }).catch(error => {
-          console.log(error);
-        });*/
-
-        fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册.pdf");
-        //FileSaver.saveAs("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册.pdf")
-      },
-      downLoadFile2(){
-
-        /*this.$axios({
-          method: 'GET',
-          url: "http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf",
-        }).then(res => {
-          console.log(res)
-
-
-        }).catch(error => {
-          console.log(error);
-        });*/
-
-        fileDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf");
-        //FileSaver.saveAs("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册.pdf")
+        fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册.pdf")
       },
       //获取图片验证码
       getCaptcha() {
