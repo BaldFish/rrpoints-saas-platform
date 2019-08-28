@@ -121,7 +121,7 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-        this.fileLinkToStreamDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf","帮助手册","pdf")
+        this.fileLinkToStreamDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册","pdf")
         //fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册", "image/pdf")
       },
       downLoadFile2(){
