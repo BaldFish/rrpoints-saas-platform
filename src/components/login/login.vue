@@ -40,6 +40,7 @@
         <p>邮箱：zhangqing@cnlaunch.com</p>
       </div>
       <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
+      <a href="javascript:void(0);" @click="downLoadFile2()">https</a>
     </div>
   </div>
 </template>
@@ -120,7 +121,48 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-        fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册.pdf")
+        this.fileLinkToStreamDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf","帮助手册","pdf")
+        //fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册", "image/pdf")
+      },
+      downLoadFile2(){
+        fileDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf")
+      },
+      fileLinkToStreamDownload(url, fileName, type) {
+        let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
+        if (!reg.test(url)) {
+          throw new Error("传入参数不合法, 不是标准的文件链接");
+        } else {
+          let that=this
+          let xhr = new XMLHttpRequest();
+          xhr.open('get', url, true);
+          xhr.setRequestHeader('Content-Type', `application/${type}`);
+          xhr.responseType = "blob";
+          xhr.onload = function () {
+            if (this.status == 200) {
+              // 接受二进制文件流
+              let blob = this.response;
+              that.downloadExportFile(blob, fileName, type)
+            }
+          }
+          xhr.send();
+        }
+      },
+      downloadExportFile(blob, tagFileName, fileType) {
+        let downloadElement = document.createElement('a');
+        let href = blob;
+        if (typeof blob == 'string') {
+          downloadElement.target = '_blank';
+        } else {
+          href = window.URL.createObjectURL(blob); // 创建下载的链接
+        }
+        downloadElement.href = href;
+        downloadElement.download = tagFileName + '.' + fileType; // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        if (typeof blob != 'string') {
+          window.URL.revokeObjectURL(href); // 释放掉 blob 对象
+        }
       },
       //获取图片验证码
       getCaptcha() {
