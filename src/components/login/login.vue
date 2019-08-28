@@ -35,7 +35,10 @@
       </div>
     </div>
     <div class="info-footer">
-      <p>联系方式：罗女士 13581622836（同微信）</p>
+      <div>
+        <p>商务负责人：张经理&nbsp;&nbsp;&nbsp;电话：18001226131（同微信）</p>
+        <p>邮箱：zhangqing@cnlaunch.com</p>
+      </div>
       <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
     </div>
   </div>
@@ -118,7 +121,7 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-        FileSaver.saveAs("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/mannul.pdf", "帮助手册.pdf")
+        FileSaver.saveAs("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册.pdf")
       },
       //获取图片验证码
       getCaptcha() {
@@ -289,11 +292,14 @@
       flex-direction row
       align-items center
       justify-content: flex-end;
-      margin-right 6%
-      p{
-        font-size:20px;
-        color:rgba(51,51,51,1);
-        margin-right 30px
+      margin-right 5%
+      div{
+        line-height normal
+        p{
+          font-size:20px;
+          color:rgba(51,51,51,1);
+          margin-right 16px
+        }
       }
       a{
         width:144px;
