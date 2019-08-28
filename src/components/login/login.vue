@@ -39,8 +39,13 @@
         <p>商务负责人：张经理&nbsp;&nbsp;&nbsp;电话：18001226131（同微信）</p>
         <p>邮箱：zhangqing@cnlaunch.com</p>
       </div>
-      <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
-      <a href="javascript:void(0);" @click="downLoadFile2()">https</a>
+      <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册zip</a>
+      <a href="javascript:void(0);" @click="downLoadFile2()">下载帮助手册right</a>
+      <a href="javascript:void(0);" @click="downLoadFile3()">https</a>
+      <a href="https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.zip" download="test.pdf">https--a</a>
+      <a href="http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.zip" download="test.pdf">http--a</a>
+      <a href="http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.zip" download>http--a666</a>
+      <a href="http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf" download>http--a89889896</a>
     </div>
   </div>
 </template>
@@ -121,11 +126,16 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-        this.fileLinkToStreamDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册","pdf")
+        this.fileLinkToStreamDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.zip","帮助手册","pdf")
         //fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册", "image/pdf")
       },
       downLoadFile2(){
-        fileDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf")
+        this.fileLinkToStreamDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf","帮助手册","pdf")
+        //fileDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf")
+      },
+      downLoadFile3(){
+        this.fileLinkToStreamDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册","pdf")
+        //fileDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf")
       },
       fileLinkToStreamDownload(url, fileName, type) {
         let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
