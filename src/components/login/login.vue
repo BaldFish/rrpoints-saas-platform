@@ -121,7 +121,7 @@
     methods: {
       //下载帮助手册
       downLoadFile(){
-        FileSaver.saveAs("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf", "帮助手册.pdf")
+        FileSaver.saveAs("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf", "帮助手册.pdf")
       },
       //获取图片验证码
       getCaptcha() {
