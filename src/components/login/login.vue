@@ -34,11 +34,19 @@
         </div>
       </div>
     </div>
-
+    <div class="info-footer">
+      <div>
+        <p>商务负责人：张经理&nbsp;&nbsp;&nbsp;电话：18001226131（同微信）</p>
+        <p>邮箱：zhangqing@cnlaunch.com</p>
+      </div>
+      <a href="javascript:void(0);" @click="downLoadFile()">下载帮助手册</a>
+    </div>
   </div>
 </template>
 
 <script>
+  var fileDownload = require('downloadjs');
+
   export default {
     name: "login",
     components: {},
@@ -90,7 +98,7 @@
           ],
 
         },
-        captcha_number: "",
+        captcha_number: require("../../common/images/code.png"), // 1.预设图片占位。火狐不显示 2.webpack要求require
         captcha_id: "",
         errorMessage: "",//错误提示信息
         errorTip: false,
@@ -101,15 +109,58 @@
     created() {
     },
     beforeMount() {
-      this.$nextTick(() => {
-        this.getCaptcha()
-      });
     },
     mounted() {
+      this.$nextTick(() => {
+         this.getCaptcha()
+      })
     },
     watch: {},
     computed: {},
     methods: {
+      //下载帮助手册
+      downLoadFile(){
+        this.fileLinkToStreamDownload("https://launchain.oss-cn-zhangjiakou.aliyuncs.com/docs/rrpoints-saas/manual.pdf","帮助手册","pdf")
+        //fileDownload("http://qiniu-assets.xinxicdn.com/rrpoints-saas/documents/manual.pdf")
+      },
+      fileLinkToStreamDownload(url, fileName, type) {
+        let reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+).)+([A-Za-z0-9-~\/])+$/;
+        if (!reg.test(url)) {
+          throw new Error("传入参数不合法, 不是标准的文件链接");
+        } else {
+          let that=this
+          let xhr = new XMLHttpRequest();
+          xhr.open('get', url, true);
+          xhr.setRequestHeader('Content-Type', `application/${type}`);
+          xhr.setRequestHeader('Access-Control-Allow-Origin', `*`);
+          xhr.responseType = "blob";
+          xhr.onload = function () {
+            if (this.status == 200) {
+              // 接受二进制文件流
+              let blob = this.response;
+              that.downloadExportFile(blob, fileName, type)
+            }
+          }
+          xhr.send();
+        }
+      },
+      downloadExportFile(blob, tagFileName, fileType) {
+        let downloadElement = document.createElement('a');
+        let href = blob;
+        if (typeof blob == 'string') {
+          downloadElement.target = '_blank';
+        } else {
+          href = window.URL.createObjectURL(blob); // 创建下载的链接
+        }
+        downloadElement.href = href;
+        downloadElement.download = tagFileName + '.' + fileType; // 下载后文件名
+        document.body.appendChild(downloadElement);
+        downloadElement.click(); // 点击下载
+        document.body.removeChild(downloadElement); // 下载完成移除元素
+        if (typeof blob != 'string') {
+          window.URL.revokeObjectURL(href); // 释放掉 blob 对象
+        }
+      },
       //获取图片验证码
       getCaptcha() {
         this.$axios({
@@ -274,5 +325,31 @@
     }
 
 
+    .info-footer{
+      display flex
+      flex-direction row
+      align-items center
+      justify-content: flex-end;
+      margin-right 5%
+      div{
+        line-height normal
+        p{
+          font-size:20px;
+          color:rgba(51,51,51,1);
+          margin-right 16px
+        }
+      }
+      a{
+        width:144px;
+        height:46px;
+        line-height 46px
+        font-size:20px;
+        text-align center
+        color:rgba(255,255,255,1);
+        background:rgba(48,106,246,1);
+        border-radius:10px;
+        display inline-block
+      }
+    }
   }
 </style>
